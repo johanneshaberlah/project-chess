@@ -2,8 +2,8 @@ package org.iu.chess;
 
 import com.google.inject.AbstractModule;
 
-public class ChessConfiguration extends AbstractModule {
-  private ChessConfiguration() {
+public class ChessModule extends AbstractModule {
+  private ChessModule() {
   }
 
   @Override
@@ -11,7 +11,7 @@ public class ChessConfiguration extends AbstractModule {
     super.configure();
   }
 
-  public static ChessConfiguration create() {
-    return new ChessConfiguration();
+  public static ChessModule create() {
+    return new ChessModule();
   }
 }

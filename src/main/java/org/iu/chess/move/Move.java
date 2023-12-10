@@ -1,4 +1,6 @@
-package org.iu.chess;
+package org.iu.chess.move;
+
+import org.iu.chess.Square;
 
 public record Move(Square from, Square to) {
 
@@ -12,5 +14,9 @@ public record Move(Square from, Square to) {
 
   public String asFenNotation() {
     return from.algebraicNotation() + to.algebraicNotation();
+  }
+
+  public RelativeMove asRelativeMove() {
+    return RelativeMove.of(to.file() - from.file(), to.rank() - from.rank());
   }
 }

@@ -1,2 +1,9 @@
-package org.iu.chess.move;public enum MoveRequirement {
+package org.iu.chess.move;
+
+public enum MoveRequirement {
+  REQUIRES_PIECE_AT_TARGET_SQUARE,
+  REQUIRES_EMPTY_TARGET_SQUARE,
+  REQUIRES_EMPTY_RANK,
+  REQUIRES_EMPTY_FILE,
+  REQUIRES_EMPTY_DIAGONAL
 }

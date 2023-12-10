@@ -1,15 +1,22 @@
-package org.iu.chess;
+package org.iu.chess.piece;
+
+import org.iu.chess.Board;
+import org.iu.chess.move.Move;
+import org.iu.chess.move.RelativeMove;
+import org.iu.chess.move.RelativeMoveWithRequirement;
 
 import java.io.File;
 import java.util.Collection;
 
 public abstract class Piece {
   private final String name;
+  private final PieceColor color;
   private final String fenName;
   private final File image;
 
-  public Piece(String name, String fenName, File image) {
+  public Piece(String name, PieceColor color, String fenName, File image) {
     this.name = name;
+    this.color = color;
     this.fenName = fenName;
     this.image = image;
   }
@@ -26,10 +33,9 @@ public abstract class Piece {
   /**
    * Returns all the reacheable moves from the given square without taking other pieces into account.
    *
-   * @param square
    * @return a collection of reacheable moves
    */
-  public abstract Collection<Move> reachableMoves(Piece piece);
+  public abstract Collection<RelativeMoveWithRequirement> reachableMoves();
 
   public String name() {
     return name;
@@ -41,5 +47,9 @@ public abstract class Piece {
 
   public File image() {
     return image;
+  }
+
+  public PieceColor color() {
+    return color;
   }
 }

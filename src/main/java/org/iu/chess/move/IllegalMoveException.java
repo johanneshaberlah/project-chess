@@ -1,4 +1,4 @@
-package org.iu.chess;
+package org.iu.chess.move;
 
 import com.google.common.base.Preconditions;
 
