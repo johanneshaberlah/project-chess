@@ -45,6 +45,7 @@ public class MainMenu extends JFrame {
     setTitle("Chess Game - Main Menu");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setSize(530, 300);
+    setResizable(false);
     setLocationRelativeTo(null);
 
     JPanel panel = new JPanel();
@@ -112,8 +113,7 @@ public class MainMenu extends JFrame {
       int selectedTime = getSelectedTime();
       String selectedDifficulty = getSelectedDifficulty();
 
-      JOptionPane.showMessageDialog(MainMenu.this,
-        "Zeit : " + selectedTime / 60 + " Minuten, Computer-Schwierigkeit: " + selectedDifficulty);
+      JOptionPane.showMessageDialog(MainMenu.this, "Spielmodus: "+getSelectedMode()+ " Zeit: "+ selectedTime/60+ " Minuten" + (play1v1Button.isSelected()? "":", Computer-Schwierigkeit: " + selectedDifficulty));
     });
 
     ActionListener aiButtonListener = e -> handleAIDifficultyButtonClick(e.getActionCommand(), "AI " + e.getActionCommand() + " gewählt", (JButton) e.getSource());
@@ -186,15 +186,16 @@ public class MainMenu extends JFrame {
   }
 
   private void updateAiButtonState() {
-    aiEasyButton.setSelected("Easy".equals(selectedMode));
-    aiMediumButton.setSelected("Medium".equals(selectedMode));
-    aiHardButton.setSelected("Hard".equals(selectedMode));
+    aiEasyButton.setSelected("Anfänger".equals(selectedMode));
+    aiMediumButton.setSelected("Fortgeschritten".equals(selectedMode));
+    aiHardButton.setSelected("Experte".equals(selectedMode));
   }
 
   private void updateTimeButtonState() {
-    time5MinutesButton.setSelected("5 minutes".equals(selectedMode));
-    time10MinutesButton.setSelected("10 minutes".equals(selectedMode));
-    time15MinutesButton.setSelected("15 minutes".equals(selectedMode));
+    System.out.println(selectedMode);
+    time5MinutesButton.setSelected("5 minuten".equals(selectedMode));
+    time10MinutesButton.setSelected("10 minuten".equals(selectedMode));
+    time15MinutesButton.setSelected("15 minuten".equals(selectedMode));
   }
 
   private void updateButtonBackground(JButton clickedButton) {
@@ -205,7 +206,6 @@ public class MainMenu extends JFrame {
       button.setContentAreaFilled(button.isSelected());
     }
   }
-
 
   private void enableAiButtons(boolean enable) {
     aiEasyButton.setEnabled(enable);
@@ -224,6 +224,12 @@ public class MainMenu extends JFrame {
     if (aiEasyButton.isSelected()) return "Anfänger";
     else if (aiMediumButton.isSelected()) return "Fortgeschritten";
     else if (aiHardButton.isSelected()) return "Experte";
+    else return "null";
+  }
+
+  private String getSelectedMode() {
+    if (play1v1Button.isSelected()) return "1v1";
+    else if (playAgainstComputerButton.isSelected()) return "AI";
     else return "null";
   }
 
