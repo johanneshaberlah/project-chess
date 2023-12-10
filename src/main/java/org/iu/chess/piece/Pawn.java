@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 public class Pawn extends Piece {
 
   private Pawn(PieceColor color) {
-    super("Pawn", color, "P");
+    super("Pawn", color, 'P');
   }
 
   @Override

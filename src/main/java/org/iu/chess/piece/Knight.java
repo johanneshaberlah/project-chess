@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Knight extends Piece {
-  private static final String KNIGHT_IMAGE_PATH = "piece/knight.png";
+
 
   private Knight(PieceColor color) {
-    super("Knight", color, "N");
+    super("Knight", color, 'N');
   }
 
   @Override
