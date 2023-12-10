@@ -10,10 +10,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Bishop extends Piece {
-  private static final String BISHOP_IMAGE_PATH = "piece/bishop.png";
 
   private Bishop(PieceColor color) {
-    super("Bishop", color, "B");
+    super("Bishop", color, 'B');
   }
 
   @Override
