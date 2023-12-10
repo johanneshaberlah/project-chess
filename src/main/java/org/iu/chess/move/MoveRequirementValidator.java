@@ -2,6 +2,7 @@ package org.iu.chess.move;
 
 import org.iu.chess.board.Board;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
@@ -14,24 +15,28 @@ public class MoveRequirementValidator {
       case REQUIRES_EMPTY_RANK -> isRankEmpty(board, move);
       case REQUIRES_EMPTY_FILE -> isFileEmpty(board, move);
       case REQUIRES_EMPTY_DIAGONAL -> isDiagonalEmpty(board, move);
+      case NONE -> true;
     };
   }
 
   private static boolean isRankEmpty(Board board, Move move) {
     return IntStream.range(move.minimalRank() + 1, move.maximalRank())
-      .mapToObj(index -> board.pieceAt(move.from().withRank(index)))
-      .anyMatch(Optional::isPresent);
+      .mapToObj(index ->  board.pieceAt(move.from().withRank(index)))
+      .filter(Objects::nonNull)
+      .noneMatch(Optional::isPresent);
   }
 
   private static boolean isFileEmpty(Board board, Move move) {
     return IntStream.range(move.minimalFile() + 1, move.maximalFile())
       .mapToObj(index -> board.pieceAt(move.from().withFile(index)))
-      .anyMatch(Optional::isPresent);
+      .filter(Objects::nonNull)
+      .noneMatch(Optional::isPresent);
   }
 
   private static boolean isDiagonalEmpty(Board board, Move move) {
-    return IntStream.range(move.minimalRank() + 1, move.maximalRank())
+    return IntStream.range(move.minimalRank() + 1, move.maximalRank() + 1)
       .mapToObj(index -> board.pieceAt(move.from().addDiagonally(index - move.minimalRank())))
-      .anyMatch(Optional::isPresent);
+      .filter(Objects::nonNull)
+      .noneMatch(Optional::isPresent);
   }
 }

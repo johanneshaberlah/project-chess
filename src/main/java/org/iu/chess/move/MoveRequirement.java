@@ -1,6 +1,7 @@
 package org.iu.chess.move;
 
 public enum MoveRequirement {
+  NONE,
   REQUIRES_PIECE_AT_TARGET_SQUARE,
   REQUIRES_EMPTY_TARGET_SQUARE,
   REQUIRES_EMPTY_RANK,

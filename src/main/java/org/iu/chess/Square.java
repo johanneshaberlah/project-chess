@@ -2,7 +2,6 @@ package org.iu.chess;
 
 public record Square(int file, int rank) {
   public Square addDiagonally(int offset) {
-    System.out.println("Relevant diagonal square: " + withRank(rank + offset).withFile(file + offset));
     return withRank(rank + offset).withFile(file + offset);
   }
 

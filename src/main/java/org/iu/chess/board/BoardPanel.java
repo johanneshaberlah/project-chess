@@ -1,42 +1,23 @@
 package org.iu.chess.board;
 
-import org.iu.chess.Square;
+import com.google.common.collect.Maps;
+import org.iu.chess.move.LegalMovePreviewListener;
+import org.iu.chess.move.MoveExecutionListener;
+import org.iu.chess.piece.Piece;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.util.Map;
 
 public class BoardPanel extends JPanel {
+  private final Map<Piece, ImageIcon> imageCache = Maps.newHashMap();
+
   private final Board board;
 
   public BoardPanel(Board board) {
     this.board = board;
-    addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent event) {
-        int squareSize = Math.min(getWidth() / 8, getHeight() / 8);
-        int file = event.getX() / squareSize;
-        int rank = 7 - (event.getY() / squareSize);
-        Square square = new Square(file, rank);
-        System.out.println("Clicked on square " + rank + ", " + file);
-        board.pieceAt(square).ifPresent(piece -> {
-          System.out.println("Clicked on " + piece.name() + " at square " + rank + ", " + file);
-          piece.reachableMoves().forEach(move -> {
-            // Inverting the y-axis for the drawing
-            if (piece.isLegalMove(board, move.move().asMove(square))) {
-              int x = (file + move.move().fileDifference()) * squareSize;
-              int y = (7 - (rank + move.move().rankDifference())) * squareSize; // Flipping the y-axis
-              event.getComponent().getGraphics().setColor(Color.RED);
-              event.getComponent().getGraphics().fillRect(x, y, squareSize, squareSize);
-              System.out.println("Reachable move: " + move.move());
-            }
-          });
-          // Handle the click event for the piece
-          // Add further action here
-        });
-      }
-    });
+    addMouseListener(LegalMovePreviewListener.of(this, board));
+    addMouseListener(MoveExecutionListener.of(board, this));
   }
 
   @Override
@@ -45,7 +26,7 @@ public class BoardPanel extends JPanel {
     int squareSize = Math.min(getWidth() / 8, getHeight() / 8);
 
     board.squares().forEach(square -> {
-      Color squareColor = (square.rank() + square.file()) % 2 == 0 ? Color.WHITE : Color.GRAY;
+      Color squareColor = (square.rank() + square.file()) % 2 == 0 ? Color.LIGHT_GRAY : Color.WHITE;
       g.setColor(squareColor);
 
       // Inverting the y-axis for the drawing
@@ -55,6 +36,10 @@ public class BoardPanel extends JPanel {
       g.fillRect(x, y, squareSize, squareSize);
 
       board.pieceAt(square).ifPresent(piece -> {
+        if (imageCache.containsKey(piece)) {
+          imageCache.get(piece).paintIcon(this, g, x, y);
+          return;
+        }
         // image drawing logic, adjusted for the inverted y-axis
         int centerX = x + squareSize / 2;
         int centerY = y + squareSize / 2;
@@ -71,10 +56,7 @@ public class BoardPanel extends JPanel {
         ImageIcon pieceImage = new ImageIcon(scaledImage);
         int imageX = centerX - pieceImage.getIconWidth() / 2;
         int imageY = centerY - pieceImage.getIconHeight() / 2;
-
-        System.out.println("Drawing " + piece.name() + " at " + imageX + ", " + imageY + " with size " +
-          pieceImage.getIconWidth() + "x" + pieceImage.getIconHeight());
-
+        imageCache.put(piece, pieceImage);
         pieceImage.paintIcon(this, g, imageX, imageY);
       });
     });
