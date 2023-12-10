@@ -2,6 +2,7 @@ package org.iu.chess.piece;
 
 import org.iu.chess.Board;
 import org.iu.chess.move.Move;
+import org.iu.chess.move.MoveRequirementValidator;
 import org.iu.chess.move.RelativeMove;
 import org.iu.chess.move.RelativeMoveWithRequirement;
 
@@ -28,7 +29,12 @@ public abstract class Piece {
    * @param move
    * @return true if the move is legal, false otherwise
    */
-  public abstract boolean isLegalMove(Board board, Move move);
+  public boolean isLegalMove(Board board, Move move) {
+    var reachableMove = reachableMoves().stream()
+      .filter(relativeMove -> relativeMove.move().equals(move.asRelativeMove()))
+      .findFirst();
+    return reachableMove.isPresent() && MoveRequirementValidator.validateMove(board, move, reachableMove.get().requirement());
+  }
 
   /**
    * Returns all the reacheable moves from the given square without taking other pieces into account.

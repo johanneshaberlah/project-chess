@@ -15,18 +15,6 @@ public class Pawn extends Piece {
   }
 
   @Override
-  public boolean isLegalMove(Board board, Move move) {
-    var reachableMove = reachableMoves().stream()
-      .filter(relativeMove -> relativeMove.move().equals(move.asRelativeMove()))
-      .findFirst();
-    if (reachableMove.isEmpty()) {
-      return false;
-    }
-    var relativeMoveWithRequirement = reachableMove.get();
-    return MoveRequirementValidator.validateMove(board, move, relativeMoveWithRequirement.requirement());
-  }
-
-  @Override
   public Collection<RelativeMoveWithRequirement> reachableMoves() {
     var legalWhiteMoves = List.of(
       RelativeMoveWithRequirement.of(0, 1, MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE), // 1 Square forward
