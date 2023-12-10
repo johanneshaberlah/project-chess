@@ -19,15 +19,14 @@ public class Queen extends Piece {
   @Override
   public Collection<RelativeMoveWithRequirement> reachableMoves() {
     List<RelativeMoveWithRequirement> legalMoves = new ArrayList<>();
-    for (int index = 1; index < 8; index++) {
-      legalMoves.add(RelativeMoveWithRequirement.of(0, index, MoveRequirement.REQUIRES_EMPTY_RANK));
-      legalMoves.add(RelativeMoveWithRequirement.of(0, -index, MoveRequirement.REQUIRES_EMPTY_RANK));
-      legalMoves.add(RelativeMoveWithRequirement.of(index, 0, MoveRequirement.REQUIRES_EMPTY_FILE));
-      legalMoves.add(RelativeMoveWithRequirement.of(-index, 0, MoveRequirement.REQUIRES_EMPTY_FILE));
-      legalMoves.add(RelativeMoveWithRequirement.of(index, index, MoveRequirement.REQUIRES_EMPTY_DIAGONAL));
-      legalMoves.add(RelativeMoveWithRequirement.of(-index, index, MoveRequirement.REQUIRES_EMPTY_DIAGONAL));
-      legalMoves.add(RelativeMoveWithRequirement.of(index, -index, MoveRequirement.REQUIRES_EMPTY_DIAGONAL));
-      legalMoves.add(RelativeMoveWithRequirement.of(-index, -index, MoveRequirement.REQUIRES_EMPTY_DIAGONAL));
+
+    int[] offsets = {1, -1, 2, -2, 3, -3, 4, -4, 5, -5, 6, -6, 7, -7};
+
+    for (int i : offsets) {
+      legalMoves.add(RelativeMoveWithRequirement.of(0, i, MoveRequirement.REQUIRES_EMPTY_RANK));
+      legalMoves.add(RelativeMoveWithRequirement.of(i, 0, MoveRequirement.REQUIRES_EMPTY_FILE));
+      legalMoves.add(RelativeMoveWithRequirement.of(i, i, MoveRequirement.REQUIRES_EMPTY_DIAGONAL));
+      legalMoves.add(RelativeMoveWithRequirement.of(i, -i, MoveRequirement.REQUIRES_EMPTY_DIAGONAL));
     }
 
     if (this.color().equals(PieceColor.WHITE)) {

@@ -19,14 +19,16 @@ public class Knight extends Piece {
   @Override
   public Collection<RelativeMoveWithRequirement> reachableMoves() {
     List<RelativeMoveWithRequirement> legalMoves = new ArrayList<>();
-    legalMoves.add(RelativeMoveWithRequirement.of(1, 2, MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE));
-    legalMoves.add(RelativeMoveWithRequirement.of(1, -2, MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE));
-    legalMoves.add(RelativeMoveWithRequirement.of(-1, 2, MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE));
-    legalMoves.add(RelativeMoveWithRequirement.of(-1, -2, MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE));
-    legalMoves.add(RelativeMoveWithRequirement.of(2, 1, MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE));
-    legalMoves.add(RelativeMoveWithRequirement.of(2, -1, MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE));
-    legalMoves.add(RelativeMoveWithRequirement.of(-2, 1, MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE));
-    legalMoves.add(RelativeMoveWithRequirement.of(-2, -1, MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE));
+
+    int[] offsets = {1, -1, 2, -2};
+
+    for (int i : offsets) {
+      for (int j : offsets) {
+        if (Math.abs(i) != Math.abs(j)) {
+          legalMoves.add(RelativeMoveWithRequirement.of(i, j, MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE));
+        }
+      }
+    }
 
     if (this.color().equals(PieceColor.WHITE)) {
       return legalMoves;

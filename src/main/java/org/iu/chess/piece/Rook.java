@@ -21,12 +21,14 @@ public class Rook extends Piece {
   @Override
   public Collection<RelativeMoveWithRequirement> reachableMoves() {
     Collection<RelativeMoveWithRequirement> legalMoves = Lists.newArrayList();
+
     for (int index = 1; index < 8; index++) {
       legalMoves.add(RelativeMoveWithRequirement.of(0, index, MoveRequirement.REQUIRES_EMPTY_RANK));
       legalMoves.add(RelativeMoveWithRequirement.of(0, -index, MoveRequirement.REQUIRES_EMPTY_RANK));
       legalMoves.add(RelativeMoveWithRequirement.of(index, 0, MoveRequirement.REQUIRES_EMPTY_FILE));
       legalMoves.add(RelativeMoveWithRequirement.of(-index, 0, MoveRequirement.REQUIRES_EMPTY_FILE));
     }
+
     if (this.color().equals(PieceColor.WHITE)) {
       return legalMoves;
     }

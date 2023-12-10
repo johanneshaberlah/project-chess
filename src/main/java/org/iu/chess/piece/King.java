@@ -19,14 +19,16 @@ public class King extends Piece {
   @Override
   public Collection<RelativeMoveWithRequirement> reachableMoves() {
     List<RelativeMoveWithRequirement> legalMoves = new ArrayList<>();
-    legalMoves.add(RelativeMoveWithRequirement.of(1, 0, MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE));
-    legalMoves.add(RelativeMoveWithRequirement.of(-1, 0, MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE));
-    legalMoves.add(RelativeMoveWithRequirement.of(0, 1, MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE));
-    legalMoves.add(RelativeMoveWithRequirement.of(0, -1, MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE));
-    legalMoves.add(RelativeMoveWithRequirement.of(1, 1, MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE));
-    legalMoves.add(RelativeMoveWithRequirement.of(1, -1, MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE));
-    legalMoves.add(RelativeMoveWithRequirement.of(-1, 1, MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE));
-    legalMoves.add(RelativeMoveWithRequirement.of(-1, -1, MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE));
+
+    int[] offsets = {1, -1, 0};
+
+    for (int i : offsets) {
+      for (int j : offsets) {
+        if (i != 0 || j != 0) {
+          legalMoves.add(RelativeMoveWithRequirement.of(i, j, MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE));
+        }
+      }
+    }
 
     if (this.color().equals(PieceColor.WHITE)) {
       return legalMoves;
