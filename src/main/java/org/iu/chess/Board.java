@@ -34,6 +34,10 @@ public class Board {
     squares.put(move.to(), Optional.of(piece));
   }
 
+  public static Board of(Map<Square, Optional<Piece>> position) {
+    return new Board(position);
+  }
+
   public static Board examplePosition() {
     Map<Square, Optional<Piece>> squares = Maps.newHashMap();
     for (int rank = 0; rank <= 8; rank++) {
