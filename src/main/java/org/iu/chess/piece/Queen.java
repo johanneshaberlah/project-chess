@@ -13,7 +13,7 @@ public class Queen extends Piece {
   private static final String QUEEN_IMAGE_PATH = "piece/queen.png";
 
   private Queen(PieceColor color) {
-    super("Queen", color, "Q", new File(QUEEN_IMAGE_PATH));
+    super("Queen", color, "Q");
   }
 
   @Override

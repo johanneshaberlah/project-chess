@@ -1,6 +1,6 @@
 package org.iu.chess.ui;
 
-import org.iu.chess.Board;
+import org.iu.chess.board.Board;
 import org.iu.chess.piece.Pawn;
 import org.iu.chess.piece.Piece;
 import org.iu.chess.piece.PieceColor;

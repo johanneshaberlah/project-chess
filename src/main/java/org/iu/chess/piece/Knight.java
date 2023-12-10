@@ -13,7 +13,7 @@ public class Knight extends Piece {
   private static final String KNIGHT_IMAGE_PATH = "piece/knight.png";
 
   private Knight(PieceColor color) {
-    super("Knight", color, "N", new File(KNIGHT_IMAGE_PATH));
+    super("Knight", color, "N");
   }
 
   @Override

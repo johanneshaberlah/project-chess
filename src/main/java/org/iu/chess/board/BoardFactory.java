@@ -34,7 +34,8 @@ public class BoardFactory {
       }
     }
 
-    return new Board(squares);
+    //return new Board(squares);
+    return null;
   }
 
   private static Piece createPieceFromFEN(char fenChar) {
@@ -44,6 +45,7 @@ public class BoardFactory {
     // 'R' oder 'r' für Rook
     // ...
 
-    return new Pawn(PieceColor.WHITE); // Dummy-Rückgabewert, ersetze dies entsprechend
+    //return new Pawn(PieceColor.WHITE); // Dummy-Rückgabewert, ersetze dies entsprechend
+    return null;
   }
 }

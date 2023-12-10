@@ -13,7 +13,7 @@ public class Bishop extends Piece {
   private static final String BISHOP_IMAGE_PATH = "piece/bishop.png";
 
   private Bishop(PieceColor color) {
-    super("Bishop", color, "B", new File(BISHOP_IMAGE_PATH));
+    super("Bishop", color, "B");
   }
 
   @Override

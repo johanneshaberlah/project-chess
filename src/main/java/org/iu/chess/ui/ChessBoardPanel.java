@@ -1,6 +1,6 @@
 package org.iu.chess.ui;
 
-import org.iu.chess.Board;
+import org.iu.chess.board.Board;
 import org.iu.chess.Square;
 import org.iu.chess.piece.Piece;
 
@@ -30,16 +30,14 @@ public class ChessBoardPanel extends JPanel {
 
                 if (piece != null) {
                     //image drawing logic
-                    //String imagePath = "src/main/resources/pieces/" + piece.image();
-                    String imagePath = createImagePath(piece.image(), piece.color().name().toLowerCase());
-                  System.out.println(imagePath);
+                    String imagePath = createImagePath(piece.name().toLowerCase(), piece.color().name().toLowerCase());
                     ImageIcon pieceImage = new ImageIcon(imagePath);
                     pieceImage.paintIcon(this, g, col * squareSize, row * squareSize);
                 }
             }
         }
     }
-    private static String createImagePath(File pieceName, String color) {
+    private static String createImagePath(String pieceName, String color) {
         return "src/main/resources/pieces/" + color + pieceName + ".png";
     }
 }
