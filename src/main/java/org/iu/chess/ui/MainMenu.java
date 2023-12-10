@@ -36,7 +36,7 @@ public class MainMenu extends JFrame {
   private JButton aiMediumButton;
   private JButton aiHardButton;
   private JButton startGameButton;
-
+  private JButton timeInfinityButton;
   private JButton loadGameButton;
 
   private String selectedMode = "";
@@ -44,7 +44,7 @@ public class MainMenu extends JFrame {
   public MainMenu() {
     setTitle("Chess Game - Main Menu");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    setSize(530, 300);
+    setSize(530, 330);
     setResizable(false);
     setLocationRelativeTo(null);
 
@@ -53,7 +53,7 @@ public class MainMenu extends JFrame {
 
     // Left column for play options
     JPanel playPanel = new JPanel();
-    playPanel.setLayout(new GridLayout(6, 1));
+    playPanel.setLayout(new GridLayout(7, 1));
     playPanel.setBackground(new Color(218, 218, 218));
 
     play1v1Button = createStyledButton("gegeneinander Spielen");
@@ -64,12 +64,14 @@ public class MainMenu extends JFrame {
     time5MinutesButton = createStyledButton("5 minuten");
     time10MinutesButton = createStyledButton("10 minuten");
     time15MinutesButton = createStyledButton("15 minuten");
+    timeInfinityButton = createStyledButton("unbegrenzt");
 
     loadGameButton = createStyledButton("Spiel laden");
     loadGameButton.setFont(customFont);
 
     playPanel.add(play1v1Button);
     playPanel.add(new JLabel(" Spielzeit wählen:"));
+    playPanel.add(timeInfinityButton);
     playPanel.add(time5MinutesButton);
     playPanel.add(time10MinutesButton);
     playPanel.add(time15MinutesButton);
@@ -79,7 +81,7 @@ public class MainMenu extends JFrame {
 
     // Right column for AI difficulty and start button
     JPanel aiPanel = new JPanel();
-    aiPanel.setLayout(new GridLayout(6, 1));
+    aiPanel.setLayout(new GridLayout(7, 1));
     aiPanel.setBackground(new Color(218, 218, 218));
 
     playAgainstComputerButton = createStyledButton("gegen den Computer spielen");
@@ -98,6 +100,7 @@ public class MainMenu extends JFrame {
     aiPanel.add(aiEasyButton);
     aiPanel.add(aiMediumButton);
     aiPanel.add(aiHardButton);
+    aiPanel.add(new JLabel(" "));
     aiPanel.add(startGameButton);
 
     panel.add(aiPanel);
@@ -113,7 +116,7 @@ public class MainMenu extends JFrame {
       int selectedTime = getSelectedTime();
       String selectedDifficulty = getSelectedDifficulty();
 
-      JOptionPane.showMessageDialog(MainMenu.this, "Spielmodus: "+getSelectedMode()+ " Zeit: "+ selectedTime/60+ " Minuten" + (play1v1Button.isSelected()? "":", Computer-Schwierigkeit: " + selectedDifficulty));
+      JOptionPane.showMessageDialog(MainMenu.this, "Spielmodus: "+getSelectedMode()+ " Zeit: "+ (selectedTime== -1? "unbegrenzt": (selectedTime/60+" Minuten")) + (play1v1Button.isSelected()? "":", Computer-Schwierigkeit: " + selectedDifficulty));
     });
 
     ActionListener aiButtonListener = e -> handleAIDifficultyButtonClick(e.getActionCommand(), "AI " + e.getActionCommand() + " gewählt", (JButton) e.getSource());
@@ -125,6 +128,7 @@ public class MainMenu extends JFrame {
     time5MinutesButton.addActionListener(timeButtonListener);
     time10MinutesButton.addActionListener(timeButtonListener);
     time15MinutesButton.addActionListener(timeButtonListener);
+    timeInfinityButton.addActionListener(timeButtonListener);
 
     // Set default selection
     play1v1Button.setSelected(true);
@@ -134,7 +138,7 @@ public class MainMenu extends JFrame {
     aiEasyButton.setSelected(true);
     updateButtonBackground(aiEasyButton);
 
-    time5MinutesButton.setSelected(true);
+    timeInfinityButton.setSelected(true);
     updateButtonBackground(time5MinutesButton);
   }
 
@@ -196,11 +200,12 @@ public class MainMenu extends JFrame {
     time5MinutesButton.setSelected("5 minuten".equals(selectedMode));
     time10MinutesButton.setSelected("10 minuten".equals(selectedMode));
     time15MinutesButton.setSelected("15 minuten".equals(selectedMode));
+    timeInfinityButton.setSelected("unbegrenzt".equals(selectedMode));
   }
 
   private void updateButtonBackground(JButton clickedButton) {
     List<JButton> allButtons = Arrays.asList(play1v1Button, playAgainstComputerButton, aiEasyButton, aiMediumButton, aiHardButton,
-      time5MinutesButton, time10MinutesButton, time15MinutesButton);
+      time5MinutesButton, time10MinutesButton, time15MinutesButton, timeInfinityButton);
 
     for (JButton button : allButtons) {
       button.setContentAreaFilled(button.isSelected());
