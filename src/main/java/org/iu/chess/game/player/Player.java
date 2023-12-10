@@ -1,10 +1,12 @@
 package org.iu.chess.game.player;
 
+import java.util.Optional;
+
 public class Player {
   private final String name;
-  private final PlayerClock clock;
+  private final Optional<PlayerClock> clock;
 
-  public Player(String name, PlayerClock clock) {
+  public Player(String name, Optional<PlayerClock> clock) {
     this.name = name;
     this.clock = clock;
   }
@@ -13,7 +15,7 @@ public class Player {
     return name;
   }
 
-  public PlayerClock clock() {
+  public Optional<PlayerClock> clock() {
     return clock;
   }
 }

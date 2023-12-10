@@ -3,6 +3,7 @@ package org.iu.chess.game;
 import org.iu.chess.board.Board;
 import org.iu.chess.game.artificial.ArtificialPlayer;
 import org.iu.chess.game.player.Player;
+import org.iu.chess.game.player.PlayerClock;
 import org.iu.chess.game.player.PlayerMove;
 import org.iu.chess.game.player.PlayerTuple;
 import org.iu.chess.move.IllegalMoveException;
@@ -34,9 +35,15 @@ public class ChessGame {
     if (move.player().equals(moves.peek().player())) {
       throw InvalidGameActionException.create(move.move(), "It is not the turn of " + move.player());
     }
+    // Finish the current move (stop clock, perform the move on the board, push it to the history)
+    move.player().clock().ifPresent(PlayerClock::finishMove);
     position.performMove(move.move());
     moves.push(move);
-    if (players.otherPlayer(move.player()) instanceof ArtificialPlayer artificialPlayer) {
+
+    // Prepare move for next player (Start Clock and if it is an artificial player, make the move)
+    var otherPlayer = players.otherPlayer(move.player());
+    otherPlayer.clock().ifPresent(PlayerClock::beginMove);
+    if (otherPlayer instanceof ArtificialPlayer artificialPlayer) {
       artificialPlayer.makeMove(this);
     }
   }
