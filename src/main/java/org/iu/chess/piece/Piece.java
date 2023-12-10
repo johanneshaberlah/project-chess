@@ -11,9 +11,9 @@ import java.util.Collection;
 public abstract class Piece {
   private final String name;
   private final PieceColor color;
-  private final String fenName;
+  private final char fenName;
 
-  public Piece(String name, PieceColor color, String fenName) {
+  public Piece(String name, PieceColor color, char fenName) {
     this.name = name;
     this.color = color;
     this.fenName = fenName;
@@ -34,9 +34,9 @@ public abstract class Piece {
   }
 
   /**
-   * Returns all the reachable moves from the given square without taking other pieces into account.
+   * Returns all the reacheable moves from the given square without taking other pieces into account.
    *
-   * @return a collection of reachable moves
+   * @return a collection of reacheable moves
    */
   public abstract Collection<RelativeMoveWithRequirement> reachableMoves();
 
@@ -44,9 +44,11 @@ public abstract class Piece {
     return name;
   }
 
-  public String fenName() {
+  public char fenName() {
     return fenName;
   }
+
+
 
   public PieceColor color() {
     return color;

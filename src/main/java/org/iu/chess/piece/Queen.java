@@ -10,10 +10,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Queen extends Piece {
-  private static final String QUEEN_IMAGE_PATH = "piece/queen.png";
 
   private Queen(PieceColor color) {
-    super("Queen", color, "Q");
+    super("Queen", color, 'Q');
   }
 
   @Override
