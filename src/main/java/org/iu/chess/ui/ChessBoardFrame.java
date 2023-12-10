@@ -44,7 +44,7 @@ public class ChessBoardFrame extends JFrame {
     playerNameLabel.setHorizontalAlignment(JLabel.CENTER);
 
     // Initialize the BoardPanel and add it to the container
-    GamePanel chessBoardPanel = new GamePanel(ChessGame.example());
+    GamePanel chessBoardPanel = new GamePanel(ChessGame.startingPosition());
     boardPanelContainer.add(chessBoardPanel, BorderLayout.CENTER);
 
     // Create a panel for the timers on the right

@@ -8,11 +8,10 @@ import org.iu.chess.game.player.PlayerClock;
 import org.iu.chess.game.player.PlayerMove;
 import org.iu.chess.game.player.PlayerTuple;
 import org.iu.chess.move.IllegalMoveException;
-import org.iu.chess.piece.Piece;
 import org.iu.chess.piece.PieceColor;
 
+import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 import java.util.Stack;
 
 public class ChessGame {
@@ -40,17 +39,18 @@ public class ChessGame {
     }
     // Finish the current move (stop clock, perform the move on the board, push it to the history)
     move.player().clock().ifPresent(PlayerClock::finishMove);
+    var targetPiece = position.pieceAt(move.move().to());
     position.performMove(move.move());
     moves.push(move);
+    targetPiece.ifPresent(piece -> playerWithColor(piece.color()).loose(piece));
 
     // Prepare move for next player (Start Clock and if it is an artificial player, make the move)
     var otherPlayer = players.otherPlayer(move.player());
     otherPlayer.clock().ifPresent(PlayerClock::beginMove);
     if (otherPlayer instanceof ArtificialPlayer artificialPlayer) {
-      artificialPlayer.makeMove(this);
+      artificialPlayer.makeMove(this, players.playerColor(artificialPlayer));
     }
   }
-
   public Board getPosition() {
     return position;
   }
@@ -59,20 +59,36 @@ public class ChessGame {
     return color.equals(PieceColor.WHITE) ? players.white() : players.black();
   }
 
-  public static ChessGame example() {
+  public static ChessGame startingPosition() {
     return new ChessGame(
       Optional.empty(),
       new PlayerTuple(
         new Player(
           "Weiß",
-          Set.of(),
+          new HashSet<>(),
           Optional.empty()
         ),
         new Player(
           "Schwarz",
-          Set.of(),
+          new HashSet<>(),
           Optional.empty()
         )
+      ),
+      new Stack<>(),
+      BoardFactory.create("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+    );
+  }
+
+  public static ChessGame startingPositionWithComputer() {
+    return new ChessGame(
+      Optional.empty(),
+      new PlayerTuple(
+        new Player(
+          "Weiß",
+          new HashSet<>(),
+          Optional.empty()
+        ),
+        ArtificialPlayer.create(Optional.empty())
       ),
       new Stack<>(),
       BoardFactory.create("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")

@@ -10,6 +10,7 @@ public class MoveRequirementValidator {
 
   public static boolean validateMove(Board board, Move move, MoveRequirement requirement) {
     return switch (requirement) {
+      case REQUIRES_NO_MUTUAL_PIECE_AT_TARGET_SQUARE -> board.pieceAt(move.to()).isEmpty() || !board.pieceAt(move.to()).get().color().equals(board.pieceAt(move.from()).get().color());
       case REQUIRES_PIECE_AT_TARGET_SQUARE -> board.pieceAt(move.to()).isPresent();
       case REQUIRES_EMPTY_TARGET_SQUARE -> board.pieceAt(move.to()).isEmpty();
       case REQUIRES_EMPTY_RANK -> isRankEmpty(board, move);
