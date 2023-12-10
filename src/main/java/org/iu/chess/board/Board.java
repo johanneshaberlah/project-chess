@@ -59,9 +59,29 @@ public class Board {
     }));
   }
 
+  private boolean isCheck() {
+    return squares.entrySet().stream()
+      .filter(entry -> entry.getValue().isPresent() && entry.getValue().get().fenName() == 'K')
+      .anyMatch(entry -> {
+        var square = entry.getKey();
+        var color = entry.getValue().get().color();
+        return piecesWithOtherColor(color).stream().anyMatch(otherPiece -> {
+          var piece = this.pieceAt(otherPiece);
+          return piece.map(value -> value.isLegalMove(this, new Move(otherPiece, square))).orElse(false);
+        });
+      });
+  }
+
   public Set<Square> piecesWithColor(PieceColor color) {
     return squares.entrySet().stream()
       .filter(entry -> entry.getValue().isPresent() && entry.getValue().get().color().equals(color))
+      .map(Map.Entry::getKey)
+      .collect(java.util.stream.Collectors.toSet());
+  }
+
+  public Set<Square> piecesWithOtherColor(PieceColor color) {
+    return squares.entrySet().stream()
+      .filter(entry -> entry.getValue().isPresent() && !entry.getValue().get().color().equals(color))
       .map(Map.Entry::getKey)
       .collect(java.util.stream.Collectors.toSet());
   }

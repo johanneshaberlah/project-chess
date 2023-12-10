@@ -1,5 +1,6 @@
 package org.iu.chess.piece;
 
+import org.iu.chess.Square;
 import org.iu.chess.board.Board;
 import org.iu.chess.move.Move;
 import org.iu.chess.move.MoveRequirementValidator;
@@ -26,6 +27,13 @@ public abstract class Piece {
 
   public void declareMoved() {
     hasMoved = true;
+  }
+
+  public Collection<Move> legalMoves(Board board, Square square) {
+    return reachableMoves().stream()
+      .map(move -> move.move().asMove(square))
+      .filter(move -> isLegalMove(board, move))
+      .toList();
   }
 
   /**
