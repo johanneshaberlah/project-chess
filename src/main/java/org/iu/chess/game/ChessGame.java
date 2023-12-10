@@ -30,6 +30,10 @@ public class ChessGame {
     this.players = players;
     this.moves = moves;
     this.position = position;
+
+    position.registerGameEndListener(winner -> {
+
+    });
   }
 
   public void performMove(PlayerMove move) throws IllegalMoveException, InvalidGameActionException {

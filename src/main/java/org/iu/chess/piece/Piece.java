@@ -60,6 +60,10 @@ public abstract class Piece {
     }).isPresent();
   }
 
+  public PieceColor otherColor() {
+    return color == PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
+  }
+
   /**
    * Returns all the reacheable moves from the given square without taking other pieces into account.
    *

@@ -1,23 +1,28 @@
 package org.iu.chess.board;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.iu.chess.Square;
+import org.iu.chess.game.ChessGameEndListener;
 import org.iu.chess.move.IllegalMoveException;
 import org.iu.chess.move.Move;
 import org.iu.chess.piece.Pawn;
 import org.iu.chess.piece.Piece;
 import org.iu.chess.piece.PieceColor;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
+import java.util.*;
 
 public class Board {
+  private final Collection<ChessGameEndListener> gameEndListeners = Lists.newArrayList();
+
   private final Map<Square, Optional<Piece>> squares;
 
   private Board(Map<Square, Optional<Piece>> squares) {
     this.squares = squares;
+  }
+
+  public void registerGameEndListener(ChessGameEndListener listener) {
+    gameEndListeners.add(listener);
   }
 
   public Optional<Piece> pieceAt(Square square) {
@@ -33,17 +38,30 @@ public class Board {
     if (!piece.isLegalMove(this, move)) {
       throw IllegalMoveException.of(move);
     }
-    if (piece.fenName() == 'K' && move.fileDistance() > 1) {
-      // Castling detected
-      performCastlingIfNecessary(move);
-    } else {
-      squares.put(move.from(), Optional.empty());
-      squares.put(move.to(), Optional.of(piece));
+    // Run Simulation
+    Board simulationBoard = Board.of(new HashMap<>(squares));
+    commitMove(simulationBoard, move, piece);
+    if (isCheck(simulationBoard, piece.color())) {
+      throw IllegalMoveException.of(move);
+    }
+    commitMove(this, move, piece);
+    if (isCheckMate(this, piece.otherColor())) {
+      gameEndListeners.forEach(listener -> listener.onGameEnd(Optional.of(piece.otherColor())));
     }
     piece.declareMoved();
   }
 
-  private void performCastlingIfNecessary(Move move) {
+  private void commitMove(Board board, Move move, Piece piece) {
+    if (piece.fenName() == 'K' && move.fileDistance() > 1) {
+      // Castling detected
+      performCastlingIfNecessary(board, move);
+    } else {
+      board.squares.put(move.from(), Optional.empty());
+      board.squares.put(move.to(), Optional.of(piece));
+    }
+  }
+
+  private void performCastlingIfNecessary(Board board, Move move) {
     pieceAt(move.from()).ifPresent(from -> pieceAt(move.to()).ifPresent(to -> {
       if (move.from().file() < move.to().file()) {
         squares.put(move.to().withFile(6), Optional.of(from));
@@ -59,17 +77,41 @@ public class Board {
     }));
   }
 
-  private boolean isCheck() {
-    return squares.entrySet().stream()
+  private boolean isCheck(Board board, PieceColor color) {
+    return board.squares.entrySet().stream()
+      .filter(entry -> entry.getValue().isPresent() && entry.getValue().get().color() == color)
       .filter(entry -> entry.getValue().isPresent() && entry.getValue().get().fenName() == 'K')
       .anyMatch(entry -> {
         var square = entry.getKey();
-        var color = entry.getValue().get().color();
-        return piecesWithOtherColor(color).stream().anyMatch(otherPiece -> {
-          var piece = this.pieceAt(otherPiece);
-          return piece.map(value -> value.isLegalMove(this, new Move(otherPiece, square))).orElse(false);
+        var otherColor = entry.getValue().get().color();
+        return piecesWithOtherColor(board.squares, otherColor).stream().anyMatch(otherPiece -> {
+          var piece = board.pieceAt(otherPiece);
+          return piece.map(value -> value.isLegalMove(board, new Move(otherPiece, square))).orElse(false);
         });
       });
+  }
+
+  private boolean isCheckMate(Board board, PieceColor pieceColor) {
+    if (isCheck(board, pieceColor)) {
+      for (Square square : piecesWithColor(pieceColor)) {
+        var piece = board.pieceAt(square);
+        var legalMoves = piece.map(value -> value.legalMoves(board, square));
+        if (!legalMoves.isPresent()) {
+          continue;
+        }
+        for (Move move : legalMoves.get()) {
+          // Run Simulation
+          Board simulationBoard = Board.of(new HashMap<>(squares));
+          commitMove(simulationBoard, move, piece.get());
+
+          if (!isCheck(simulationBoard, piece.get().color())) {
+            return false;
+          }
+        }
+      }
+      return true;
+    }
+    return false;
   }
 
   public Set<Square> piecesWithColor(PieceColor color) {
@@ -79,8 +121,8 @@ public class Board {
       .collect(java.util.stream.Collectors.toSet());
   }
 
-  public Set<Square> piecesWithOtherColor(PieceColor color) {
-    return squares.entrySet().stream()
+  public Set<Square> piecesWithOtherColor(Map<Square, Optional<Piece>> copy, PieceColor color) {
+    return copy.entrySet().stream()
       .filter(entry -> entry.getValue().isPresent() && !entry.getValue().get().color().equals(color))
       .map(Map.Entry::getKey)
       .collect(java.util.stream.Collectors.toSet());
