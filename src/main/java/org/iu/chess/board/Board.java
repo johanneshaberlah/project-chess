@@ -32,7 +32,7 @@ public class Board {
     var targetPiece = squares.computeIfAbsent(move.to(), key -> {
       throw new RuntimeException("The to-square is out of the board.");
     });
-    if ((targetPiece.isPresent() && targetPiece.get().color().equals(piece.color())) && !piece.isLegalMove(this, move)) {
+    if ((targetPiece.isPresent() && targetPiece.get().color().equals(piece.color())) || !piece.isLegalMove(this, move)) {
       throw IllegalMoveException.of(move);
     }
     squares.put(move.from(), Optional.empty());

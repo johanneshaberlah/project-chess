@@ -33,13 +33,7 @@ public abstract class Piece {
     var reachableMove = reachableMoves().stream()
       .filter(relativeMove -> relativeMove.move().equals(move.asRelativeMove()))
       .findFirst();
-    boolean present = reachableMove.isPresent();
-    if (reachableMove.isEmpty()) {
-      return false;
-    }
-    boolean valid = MoveRequirementValidator.validateMove(board, move, reachableMove.get().requirement());
-    System.out.println("move#from: " + move.from() + ", move#to: " + move.to() + " valid: " + valid);
-    return valid;
+    return reachableMove.isPresent() && reachableMove.filter(relativeMoveWithRequirement -> MoveRequirementValidator.validateMove(board, move, relativeMoveWithRequirement.requirement())).isPresent();
   }
 
   /**
