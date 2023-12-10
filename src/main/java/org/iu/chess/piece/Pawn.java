@@ -1,6 +1,5 @@
 package org.iu.chess.piece;
 
-import org.iu.chess.Board;
 import org.iu.chess.move.*;
 
 import java.io.File;

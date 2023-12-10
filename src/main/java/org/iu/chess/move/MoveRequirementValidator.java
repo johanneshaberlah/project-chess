@@ -1,6 +1,6 @@
 package org.iu.chess.move;
 
-import org.iu.chess.Board;
+import org.iu.chess.board.Board;
 
 import java.util.Optional;
 import java.util.stream.IntStream;

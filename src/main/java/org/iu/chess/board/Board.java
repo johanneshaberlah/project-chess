@@ -1,6 +1,7 @@
-package org.iu.chess;
+package org.iu.chess.board;
 
 import com.google.common.collect.Maps;
+import org.iu.chess.Square;
 import org.iu.chess.move.IllegalMoveException;
 import org.iu.chess.move.Move;
 import org.iu.chess.piece.Pawn;

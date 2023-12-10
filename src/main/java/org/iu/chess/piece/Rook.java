@@ -1,15 +1,11 @@
 package org.iu.chess.piece;
 
 import com.google.common.collect.Lists;
-import org.iu.chess.Board;
-import org.iu.chess.move.Move;
 import org.iu.chess.move.MoveRequirement;
-import org.iu.chess.move.MoveRequirementValidator;
 import org.iu.chess.move.RelativeMoveWithRequirement;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class Rook extends Piece {

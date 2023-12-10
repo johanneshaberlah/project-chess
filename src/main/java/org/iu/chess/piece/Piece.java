@@ -1,9 +1,8 @@
 package org.iu.chess.piece;
 
-import org.iu.chess.Board;
+import org.iu.chess.board.Board;
 import org.iu.chess.move.Move;
 import org.iu.chess.move.MoveRequirementValidator;
-import org.iu.chess.move.RelativeMove;
 import org.iu.chess.move.RelativeMoveWithRequirement;
 
 import java.io.File;
