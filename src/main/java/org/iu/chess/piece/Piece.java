@@ -12,13 +12,11 @@ public abstract class Piece {
   private final String name;
   private final PieceColor color;
   private final String fenName;
-  private final File image;
 
-  public Piece(String name, PieceColor color, String fenName, File image) {
+  public Piece(String name, PieceColor color, String fenName) {
     this.name = name;
     this.color = color;
     this.fenName = fenName;
-    this.image = image;
   }
 
   /**
@@ -36,9 +34,9 @@ public abstract class Piece {
   }
 
   /**
-   * Returns all the reacheable moves from the given square without taking other pieces into account.
+   * Returns all the reachable moves from the given square without taking other pieces into account.
    *
-   * @return a collection of reacheable moves
+   * @return a collection of reachable moves
    */
   public abstract Collection<RelativeMoveWithRequirement> reachableMoves();
 
@@ -48,10 +46,6 @@ public abstract class Piece {
 
   public String fenName() {
     return fenName;
-  }
-
-  public File image() {
-    return image;
   }
 
   public PieceColor color() {

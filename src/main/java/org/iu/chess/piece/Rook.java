@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public class Rook extends Piece {
 
   private Rook(PieceColor color) {
-    super("Rook", color, "R", new File("piece/rook.png"));
+    super("Rook", color, "R", new File("rook"));
   }
 
   @Override
