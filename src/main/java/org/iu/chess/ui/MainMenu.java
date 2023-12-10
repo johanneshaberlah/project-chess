@@ -5,6 +5,25 @@ import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
+import java.util.List;
+
+enum GameMode {
+  ONE_VS_ONE,
+  COMPUTER
+}
+
+enum AiDifficulty {
+  EASY,
+  MEDIUM,
+  HARD
+}
+
+enum Time {
+  FIVE_MINUTES,
+  TEN_MINUTES,
+  FIFTEEN_MINUTES
+}
 
 public class MainMenu extends JFrame {
 
@@ -20,7 +39,7 @@ public class MainMenu extends JFrame {
 
   private JButton loadGameButton;
 
-  private String selectedMode = "1v1"; // Default selected mode
+  private String selectedMode = "";
 
   public MainMenu() {
     setTitle("Chess Game - Main Menu");
@@ -48,7 +67,6 @@ public class MainMenu extends JFrame {
     loadGameButton = createStyledButton("Load Game");
     loadGameButton.setFont(customFont);
 
-
     playPanel.add(play1v1Button);
     playPanel.add(new JLabel(" Select Time:"));
     playPanel.add(time5MinutesButton);
@@ -65,7 +83,6 @@ public class MainMenu extends JFrame {
 
     playAgainstComputerButton = createStyledButton("Play Against Computer");
     playAgainstComputerButton.setFont(customFont);
-
 
     aiEasyButton = createStyledButton("Easy");
     aiMediumButton = createStyledButton("Medium");
@@ -86,81 +103,60 @@ public class MainMenu extends JFrame {
 
     add(panel);
 
-    play1v1Button.addActionListener(e -> {
-      selectedMode = "Computer";
-      updateGamemodeButtonState();
-      enableAiButtons(true);
-      updateGamemodeButtonBackground();
-      JOptionPane.showMessageDialog(MainMenu.this, "1v1 game selected");
-    });
-
-    playAgainstComputerButton.addActionListener(e -> {
-      selectedMode = "1v1";
-      updateGamemodeButtonState();
-      enableAiButtons(false);
-      updateGamemodeButtonBackground();
-      JOptionPane.showMessageDialog(MainMenu.this, "Play against computer selected");
-    });
+    play1v1Button.addActionListener(e ->
+      handleGameModeButtonClick(GameMode.ONE_VS_ONE, "1v1 game selected", play1v1Button));
+    playAgainstComputerButton.addActionListener(e ->
+      handleGameModeButtonClick(GameMode.COMPUTER, "Play against computer selected", playAgainstComputerButton));
 
     startGameButton.addActionListener(e -> {
       int selectedTime = getSelectedTime();
       String selectedDifficulty = getSelectedDifficulty();
 
       JOptionPane.showMessageDialog(MainMenu.this,
-        "Selected Time: " + selectedTime/60 + " Minutes, AI Difficulty: " + selectedDifficulty);
+        "Selected Time: " + selectedTime / 60 + " Minutes, AI Difficulty: " + selectedDifficulty);
     });
 
-    aiEasyButton.addActionListener(e -> {
-      selectedMode = "Easy";
-      updateAiButtonState();
-      updateAiButtonBackground();
-      JOptionPane.showMessageDialog(MainMenu.this, "Easy AI selected");
-    });
+    ActionListener aiButtonListener = e -> handleAIDifficultyButtonClick(e.getActionCommand(), "AI " + e.getActionCommand() + " selected", (JButton) e.getSource());
+    aiEasyButton.addActionListener(aiButtonListener);
+    aiMediumButton.addActionListener(aiButtonListener);
+    aiHardButton.addActionListener(aiButtonListener);
 
-    aiMediumButton.addActionListener(e -> {
-      selectedMode = "Medium";
-      updateAiButtonState();
-      updateAiButtonBackground();
-      JOptionPane.showMessageDialog(MainMenu.this, "Medium AI selected");
-    });
-
-    aiHardButton.addActionListener(e -> {
-      selectedMode = "Hard";
-      updateAiButtonState();
-      updateAiButtonBackground();
-      JOptionPane.showMessageDialog(MainMenu.this, "Hard AI selected");
-    });
-
-    time5MinutesButton.addActionListener(e -> {
-      selectedMode = "5 minutes";
-      updateTimeButtonState();
-      updateTimeButtonBackground();
-      JOptionPane.showMessageDialog(MainMenu.this, "5 minutes selected");
-    });
-
-    time10MinutesButton.addActionListener(e -> {
-      selectedMode = "10 minutes";
-      updateTimeButtonState();
-      updateTimeButtonBackground();
-      JOptionPane.showMessageDialog(MainMenu.this, "10 minutes selected");
-    });
-
-    time15MinutesButton.addActionListener(e -> {
-      selectedMode = "15 minutes";
-      updateTimeButtonState();
-      updateTimeButtonBackground();
-      JOptionPane.showMessageDialog(MainMenu.this, "15 minutes selected");
-    });
+    ActionListener timeButtonListener = e -> handleTimeOptionButtonClick(e.getActionCommand(), e.getActionCommand() + " selected", (JButton) e.getSource());
+    time5MinutesButton.addActionListener(timeButtonListener);
+    time10MinutesButton.addActionListener(timeButtonListener);
+    time15MinutesButton.addActionListener(timeButtonListener);
 
     // Set default selection
     play1v1Button.setSelected(true);
-    updateGamemodeButtonBackground();
+    updateButtonBackground(play1v1Button);
 
     aiEasyButton.setSelected(true);
-    updateAiButtonBackground();
+    updateButtonBackground(aiEasyButton);
 
     time5MinutesButton.setSelected(true);
-    updateTimeButtonBackground();
+    updateButtonBackground(time5MinutesButton);
+  }
+
+  private void handleGameModeButtonClick(GameMode gameMode, String message, JButton button) {
+    selectedMode = gameMode.name();
+    updateGamemodeButtonState();
+    enableAiButtons(gameMode == GameMode.COMPUTER);
+    updateButtonBackground(button);
+    JOptionPane.showMessageDialog(MainMenu.this, message);
+  }
+
+  private void handleAIDifficultyButtonClick(String difficulty, String message, JButton button) {
+    selectedMode = difficulty;
+    updateAiButtonState();
+    updateButtonBackground(button);
+    JOptionPane.showMessageDialog(MainMenu.this, message);
+  }
+
+  private void handleTimeOptionButtonClick(String timeOption, String message, JButton button) {
+    selectedMode = timeOption;
+    updateTimeButtonState();
+    updateButtonBackground(button);
+    JOptionPane.showMessageDialog(MainMenu.this, message);
   }
 
   private JButton createStyledButton(String text) {
@@ -184,13 +180,8 @@ public class MainMenu extends JFrame {
   }
 
   private void updateGamemodeButtonState() {
-    play1v1Button.setSelected("1v1".equals(selectedMode));
-    playAgainstComputerButton.setSelected("Computer".equals(selectedMode));
-  }
-
-  private void updateGamemodeButtonBackground() {
-    play1v1Button.setContentAreaFilled(play1v1Button.isSelected());
-    playAgainstComputerButton.setContentAreaFilled(playAgainstComputerButton.isSelected());
+    playAgainstComputerButton.setSelected(selectedMode.equals(GameMode.COMPUTER.name()));
+    play1v1Button.setSelected(selectedMode.equals(GameMode.ONE_VS_ONE.name()));
   }
 
   private void updateAiButtonState() {
@@ -199,22 +190,19 @@ public class MainMenu extends JFrame {
     aiHardButton.setSelected("Hard".equals(selectedMode));
   }
 
-  private void updateAiButtonBackground() {
-    aiEasyButton.setContentAreaFilled(aiEasyButton.isSelected());
-    aiMediumButton.setContentAreaFilled(aiMediumButton.isSelected());
-    aiHardButton.setContentAreaFilled(aiHardButton.isSelected());
-  }
-
   private void updateTimeButtonState() {
     time5MinutesButton.setSelected("5 minutes".equals(selectedMode));
     time10MinutesButton.setSelected("10 minutes".equals(selectedMode));
     time15MinutesButton.setSelected("15 minutes".equals(selectedMode));
   }
 
-  private void updateTimeButtonBackground() {
-    time5MinutesButton.setContentAreaFilled(time5MinutesButton.isSelected());
-    time10MinutesButton.setContentAreaFilled(time10MinutesButton.isSelected());
-    time15MinutesButton.setContentAreaFilled(time15MinutesButton.isSelected());
+  private void updateButtonBackground(JButton clickedButton) {
+    List<JButton> allButtons = Arrays.asList(play1v1Button, playAgainstComputerButton, aiEasyButton, aiMediumButton, aiHardButton,
+      time5MinutesButton, time10MinutesButton, time15MinutesButton);
+
+    for (JButton button : allButtons) {
+      button.setContentAreaFilled(button.isSelected());
+    }
   }
 
 
@@ -225,27 +213,17 @@ public class MainMenu extends JFrame {
   }
 
   private int getSelectedTime() {
-    if (time5MinutesButton.isSelected()) {
-      return 300;
-    } else if (time10MinutesButton.isSelected()) {
-      return 600;
-    } else if (time15MinutesButton.isSelected()) {
-      return 900;
-    } else {
-      return -1;
-    }
+    if (time5MinutesButton.isSelected()) return 300;
+    else if (time10MinutesButton.isSelected()) return 600;
+    else if (time15MinutesButton.isSelected()) return 900;
+    else return -1;
   }
 
   private String getSelectedDifficulty() {
-    if (aiEasyButton.isSelected()) {
-      return "Easy";
-    } else if (aiMediumButton.isSelected()) {
-      return "Medium";
-    } else if (aiHardButton.isSelected()) {
-      return "Hard";
-    } else {
-      return "null";
-    }
+    if (aiEasyButton.isSelected()) return "Easy";
+    else if (aiMediumButton.isSelected()) return "Medium";
+    else if (aiHardButton.isSelected()) return "Hard";
+    else return "null";
   }
 
   public static void main(String[] args) {
