@@ -24,7 +24,7 @@ public class King extends Piece {
     for (int i : offsets) {
       for (int j : offsets) {
         if (i != 0 || j != 0) {
-          legalMoves.add(RelativeMoveWithRequirement.of(i, j, MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE));
+          legalMoves.add(RelativeMoveWithRequirement.of(i, j));
         }
       }
     }
