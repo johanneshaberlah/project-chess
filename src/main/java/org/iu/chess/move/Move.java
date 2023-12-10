@@ -1,6 +1,7 @@
 package org.iu.chess.move;
 
 import org.iu.chess.Square;
+import org.iu.chess.board.Board;
 
 public record Move(Square from, Square to) {
   public int minimalRank() {
@@ -29,6 +30,10 @@ public record Move(Square from, Square to) {
 
   public String asFenNotation() {
     return from.algebraicNotation() + to.algebraicNotation();
+  }
+
+  public Square moveWithMinimalRank() {
+    return from.rank() < to.rank() ? from : to;
   }
 
   public RelativeMove asRelativeMove() {

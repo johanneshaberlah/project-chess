@@ -33,9 +33,30 @@ public class Board {
     if (!piece.isLegalMove(this, move)) {
       throw IllegalMoveException.of(move);
     }
-    squares.put(move.from(), Optional.empty());
-    squares.put(move.to(), Optional.of(piece));
+    if (piece.fenName() == 'K' && move.fileDistance() > 1) {
+      // Castling detected
+      performCastlingIfNecessary(move);
+    } else {
+      squares.put(move.from(), Optional.empty());
+      squares.put(move.to(), Optional.of(piece));
+    }
     piece.declareMoved();
+  }
+
+  private void performCastlingIfNecessary(Move move) {
+    pieceAt(move.from()).ifPresent(from -> pieceAt(move.to()).ifPresent(to -> {
+      if (move.from().file() < move.to().file()) {
+        squares.put(move.to().withFile(6), Optional.of(from));
+        squares.put(move.to().withFile(5), Optional.of(to));
+        squares.put(move.to(), Optional.empty());
+        squares.put(move.from(), Optional.empty());
+      } else {
+        squares.put(move.to().withFile(1), Optional.of(from));
+        squares.put(move.to().withFile(2), Optional.of(to));
+        squares.put(move.from(), Optional.empty());
+        squares.put(move.to(), Optional.empty());
+      }
+    }));
   }
 
   public Set<Square> piecesWithColor(PieceColor color) {
