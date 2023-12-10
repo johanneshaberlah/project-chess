@@ -2,6 +2,7 @@ package org.iu.chess.move;
 
 import org.iu.chess.Square;
 import org.iu.chess.board.Board;
+import org.iu.chess.game.ChessGame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,11 +16,11 @@ public class LegalMovePreviewListener extends MouseAdapter {
   private final Stack<Point> previewPoints = new Stack<>();
 
   private final JPanel parent;
-  private final Board board;
+  private final ChessGame game;
 
-  private LegalMovePreviewListener(JPanel parent, Board board) {
+  private LegalMovePreviewListener(JPanel parent, ChessGame game) {
     this.parent = parent;
-    this.board = board;
+    this.game = game;
   }
 
   @Override
@@ -31,7 +32,7 @@ public class LegalMovePreviewListener extends MouseAdapter {
     var graphics = parent.getGraphics();
     graphics.setColor(new Color(107, 110, 70));
     SwingUtilities.invokeLater(() -> {
-      board.pieceAt(square).ifPresent(piece -> {
+      game.getPosition().pieceAt(square).ifPresent(piece -> {
         while (!previewPoints.empty()) {
           Point point = previewPoints.pop();
           parent.repaint(new Rectangle(point.x, point.y, squareSize, squareSize));
@@ -40,8 +41,8 @@ public class LegalMovePreviewListener extends MouseAdapter {
         piece.reachableMoves().forEach(move -> {
           // Inverting the y-axis for the drawing
           var baseMove = move.move().asMove(square);
-          var targetPiece = board.pieceAt(move.move().asMove(square).to());
-          if (piece.isLegalMove(board, baseMove) && !(targetPiece.isPresent() && targetPiece.get().color() == piece.color())) {
+          var targetPiece = game.getPosition().pieceAt(move.move().asMove(square).to());
+          if (piece.isLegalMove(game.getPosition(), baseMove) && !(targetPiece.isPresent() && targetPiece.get().color() == piece.color())) {
             int x = (file + move.move().fileDifference()) * squareSize;
             int y = (7 - (rank + move.move().rankDifference())) * squareSize; // Flipping the y-axis
             graphics.fillOval(x + squareSize / 2 - squareSize / 8, y + squareSize / 2 - squareSize / 8, squareSize / 4, squareSize / 4);
@@ -53,7 +54,7 @@ public class LegalMovePreviewListener extends MouseAdapter {
 
   }
 
-  public static LegalMovePreviewListener of(JPanel parent, Board board) {
-    return new LegalMovePreviewListener(parent, board);
+  public static LegalMovePreviewListener of(JPanel parent, ChessGame game) {
+    return new LegalMovePreviewListener(parent, game);
   }
 }

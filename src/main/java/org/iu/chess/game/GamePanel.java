@@ -1,6 +1,7 @@
-package org.iu.chess.board;
+package org.iu.chess.game;
 
 import com.google.common.collect.Maps;
+import org.iu.chess.board.Board;
 import org.iu.chess.move.LegalMovePreviewListener;
 import org.iu.chess.move.MoveExecutionListener;
 import org.iu.chess.piece.Piece;
@@ -9,15 +10,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Map;
 
-public class BoardPanel extends JPanel {
+public class GamePanel extends JPanel {
   private final Map<Piece, ImageIcon> imageCache = Maps.newHashMap();
 
-  private final Board board;
+  private final ChessGame game;
 
-  public BoardPanel(Board board) {
-    this.board = board;
-    addMouseListener(LegalMovePreviewListener.of(this, board));
-    addMouseListener(MoveExecutionListener.of(board, this));
+  public GamePanel(ChessGame game) {
+    this.game = game;
+    addMouseListener(LegalMovePreviewListener.of(this, game));
+    addMouseListener(MoveExecutionListener.of(this, game));
   }
 
   @Override
@@ -25,7 +26,7 @@ public class BoardPanel extends JPanel {
     super.paintComponent(g);
     int squareSize = Math.min(getWidth() / 8, getHeight() / 8);
 
-    board.squares().forEach(square -> {
+    game.getPosition().squares().forEach(square -> {
       Color squareColor = (square.rank() + square.file()) % 2 == 0 ? Color.LIGHT_GRAY : Color.WHITE;
       g.setColor(squareColor);
 
@@ -35,7 +36,7 @@ public class BoardPanel extends JPanel {
 
       g.fillRect(x, y, squareSize, squareSize);
 
-      board.pieceAt(square).ifPresent(piece -> {
+      game.getPosition().pieceAt(square).ifPresent(piece -> {
         if (imageCache.containsKey(piece)) {
           imageCache.get(piece).paintIcon(this, g, x, y);
           return;

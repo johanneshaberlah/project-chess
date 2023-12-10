@@ -37,6 +37,7 @@ public class Board {
     }
     squares.put(move.from(), Optional.empty());
     squares.put(move.to(), Optional.of(piece));
+    piece.declareMoved();
   }
 
   public static Board of(Map<Square, Optional<Piece>> position) {

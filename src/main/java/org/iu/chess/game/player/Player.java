@@ -1,14 +1,31 @@
 package org.iu.chess.game.player;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
+import org.iu.chess.piece.Piece;
+
 import java.util.Optional;
+import java.util.Set;
 
 public class Player {
   private final String name;
+  private final Set<Piece> lostPieces;
   private final Optional<PlayerClock> clock;
 
-  public Player(String name, Optional<PlayerClock> clock) {
+  public Player(String name, Set<Piece> lostPieces, Optional<PlayerClock> clock) {
     this.name = name;
+    this.lostPieces = lostPieces;
     this.clock = clock;
+  }
+
+  public void loose(Piece piece) {
+    Preconditions.checkNotNull(piece);
+    lostPieces.add(piece);
+  }
+
+  public Set<Piece> lostPieces() {
+    // Return an immutable copy to avoid set#clear calls
+    return Sets.newHashSet(lostPieces);
   }
 
   public String name() {

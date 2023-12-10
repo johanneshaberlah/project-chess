@@ -3,7 +3,8 @@ package org.iu.chess.ui;
 import com.google.common.base.Preconditions;
 import org.iu.chess.board.Board;
 import org.iu.chess.board.BoardFactory;
-import org.iu.chess.board.BoardPanel;
+import org.iu.chess.game.ChessGame;
+import org.iu.chess.game.GamePanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -43,7 +44,7 @@ public class ChessBoardFrame extends JFrame {
     playerNameLabel.setHorizontalAlignment(JLabel.CENTER);
 
     // Initialize the BoardPanel and add it to the container
-    BoardPanel chessBoardPanel = new BoardPanel(board);
+    GamePanel chessBoardPanel = new GamePanel(ChessGame.example());
     boardPanelContainer.add(chessBoardPanel, BorderLayout.CENTER);
 
     // Create a panel for the timers on the right

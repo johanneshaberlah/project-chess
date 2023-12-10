@@ -15,6 +15,9 @@ public class MoveRequirementValidator {
       case REQUIRES_EMPTY_RANK -> isRankEmpty(board, move);
       case REQUIRES_EMPTY_FILE -> isFileEmpty(board, move);
       case REQUIRES_EMPTY_DIAGONAL -> isDiagonalEmpty(board, move);
+      case PIECE_NEVER_MOVED -> !board.pieceAt(move.from()).get().hasMoved();
+      case CASTLING_KING_SIDE -> true;
+      case CASTLING_QUEEN_SIDE -> true;
       case NONE -> true;
     };
   }

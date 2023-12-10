@@ -2,20 +2,23 @@ package org.iu.chess.move;
 
 import org.iu.chess.Square;
 import org.iu.chess.board.Board;
+import org.iu.chess.game.ChessGame;
+import org.iu.chess.game.InvalidGameActionException;
+import org.iu.chess.game.player.PlayerMove;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class MoveExecutionListener extends MouseAdapter {
-  private final Board board;
+  private final ChessGame game;
   private final JPanel parent;
 
   private SquareTimeTuple lastClick;
 
-  private MoveExecutionListener(Board board, JPanel parent) {
-    this.board = board;
+  private MoveExecutionListener(JPanel parent, ChessGame game) {
     this.parent = parent;
+    this.game = game;
   }
 
   @Override
@@ -45,15 +48,23 @@ public class MoveExecutionListener extends MouseAdapter {
       lastClick = null;
       return;
     }
-    try {
-      board.performMove(new Move(lastClick.square(), square));
-      parent.repaint();
-    } catch (IllegalMoveException e) {
-      JOptionPane.showMessageDialog(parent, "Dieser Move ist nicht erlaubt.");
-    }
+    game.getPosition().pieceAt(lastClick.square()).ifPresent(piece -> {
+      try {
+        game.performMove(
+          new PlayerMove(game.playerWithColor(piece.color()), new Move(lastClick.square(), square))
+        );
+        parent.repaint();
+      } catch (IllegalMoveException e) {
+        JOptionPane.showMessageDialog(parent, "Dieser Move ist nicht erlaubt.");
+      } catch (InvalidGameActionException e) {
+        JOptionPane.showMessageDialog(parent, "Dieser Spieler ist nicht an der Reihe.");
+      } finally {
+        lastClick = null;
+      }
+    });
   }
 
-  public static MoveExecutionListener of(Board board, JPanel parent) {
-    return new MoveExecutionListener(board, parent);
+  public static MoveExecutionListener of(JPanel parent, ChessGame game) {
+    return new MoveExecutionListener(parent, game);
   }
 }
