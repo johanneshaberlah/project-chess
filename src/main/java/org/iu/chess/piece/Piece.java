@@ -27,10 +27,19 @@ public abstract class Piece {
    * @return true if the move is legal, false otherwise
    */
   public boolean isLegalMove(Board board, Move move) {
+    if (board.pieceAt(move.from()) == null || board.pieceAt(move.to()) == null) {
+      return false;
+    }
     var reachableMove = reachableMoves().stream()
       .filter(relativeMove -> relativeMove.move().equals(move.asRelativeMove()))
       .findFirst();
-    return reachableMove.isPresent() && MoveRequirementValidator.validateMove(board, move, reachableMove.get().requirement());
+    boolean present = reachableMove.isPresent();
+    if (reachableMove.isEmpty()) {
+      return false;
+    }
+    boolean valid = MoveRequirementValidator.validateMove(board, move, reachableMove.get().requirement());
+    System.out.println("move#from: " + move.from() + ", move#to: " + move.to() + " valid: " + valid);
+    return valid;
   }
 
   /**

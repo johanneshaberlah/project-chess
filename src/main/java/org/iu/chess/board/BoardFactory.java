@@ -15,7 +15,7 @@ public class BoardFactory {
 
     if (fenParts.length >= 1) {
       String piecePlacement = fenParts[0];
-      int rank = 8, file = 1;
+      int rank = 7, file = 0;
 
       for (char fenChar : piecePlacement.toCharArray()) {
         if (Character.isDigit(fenChar)) {
@@ -27,7 +27,7 @@ public class BoardFactory {
           }
         } else if (fenChar == '/') {
           rank--;
-          file = 1;
+          file = 0;
         } else {
           Square square = new Square(file, rank);
           Optional<Piece> piece = createPieceFromFEN(fenChar);

@@ -29,7 +29,9 @@ public class Board {
 
   public void performMove(Move move) throws IllegalMoveException {
     var piece = squares.get(move.from()).orElseThrow(() -> IllegalMoveException.of(move));
-    var targetPiece = squares.computeIfAbsent(move.to(), key -> { throw new RuntimeException("The to-square is out of the board."); });
+    var targetPiece = squares.computeIfAbsent(move.to(), key -> {
+      throw new RuntimeException("The to-square is out of the board.");
+    });
     if ((targetPiece.isPresent() && targetPiece.get().color().equals(piece.color())) && !piece.isLegalMove(this, move)) {
       throw IllegalMoveException.of(move);
     }
