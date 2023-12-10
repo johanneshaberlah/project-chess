@@ -10,6 +10,7 @@ import org.iu.chess.piece.PieceColor;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class Board {
   private final Map<Square, Optional<Piece>> squares;
@@ -28,7 +29,8 @@ public class Board {
 
   public void performMove(Move move) throws IllegalMoveException {
     var piece = squares.get(move.from()).orElseThrow(() -> IllegalMoveException.of(move));
-    if (!squares.containsKey(move.to()) || !piece.isLegalMove(this, move)) {
+    var targetPiece = squares.computeIfAbsent(move.to(), key -> { throw new RuntimeException("The to-square is out of the board."); });
+    if ((targetPiece.isPresent() && targetPiece.get().color().equals(piece.color())) && !piece.isLegalMove(this, move)) {
       throw IllegalMoveException.of(move);
     }
     squares.put(move.from(), Optional.empty());
