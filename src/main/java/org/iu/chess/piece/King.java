@@ -28,6 +28,8 @@ public class King extends Piece {
         }
       }
     }
+    legalMoves.add(RelativeMoveWithRequirement.withMutualTarget(4,0, MoveRequirement.CASTLING_KING_SIDE));
+    legalMoves.add(RelativeMoveWithRequirement.withMutualTarget(-5,0, MoveRequirement.CASTLING_QUEEN_SIDE));
 
     if (this.color().equals(PieceColor.WHITE)) {
       return legalMoves;

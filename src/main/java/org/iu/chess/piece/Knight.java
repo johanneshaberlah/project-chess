@@ -25,7 +25,7 @@ public class Knight extends Piece {
     for (int i : offsets) {
       for (int j : offsets) {
         if (Math.abs(i) != Math.abs(j)) {
-          legalMoves.add(RelativeMoveWithRequirement.of(i, j, MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE));
+          legalMoves.add(RelativeMoveWithRequirement.of(i, j, MoveRequirement.NONE));
         }
       }
     }

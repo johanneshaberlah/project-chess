@@ -5,7 +5,6 @@ import org.iu.chess.move.Move;
 import org.iu.chess.move.MoveRequirementValidator;
 import org.iu.chess.move.RelativeMoveWithRequirement;
 
-import java.io.File;
 import java.util.Collection;
 
 public abstract class Piece {
@@ -13,10 +12,20 @@ public abstract class Piece {
   private final PieceColor color;
   private final char fenName;
 
+  private boolean hasMoved;
+
   public Piece(String name, PieceColor color, char fenName) {
     this.name = name;
     this.color = color;
     this.fenName = fenName;
+  }
+
+  public boolean hasMoved() {
+    return hasMoved;
+  }
+
+  public void declareMoved() {
+    hasMoved = true;
   }
 
   /**
@@ -33,13 +42,14 @@ public abstract class Piece {
     var reachableMove = reachableMoves().stream()
       .filter(relativeMove -> relativeMove.move().equals(move.asRelativeMove()))
       .findFirst();
-    boolean present = reachableMove.isPresent();
-    if (reachableMove.isEmpty()) {
-      return false;
-    }
-    boolean valid = MoveRequirementValidator.validateMove(board, move, reachableMove.get().requirement());
-    System.out.println("move#from: " + move.from() + ", move#to: " + move.to() + " valid: " + valid);
-    return valid;
+    return reachableMove.isPresent() && reachableMove.filter(relativeMoveWithRequirement -> {
+      for (var requirement : relativeMoveWithRequirement.requirement()) {
+        if (!MoveRequirementValidator.validateMove(board, move, requirement)) {
+          return false;
+        }
+      }
+      return true;
+    }).isPresent();
   }
 
   /**
@@ -56,8 +66,6 @@ public abstract class Piece {
   public char fenName() {
     return fenName;
   }
-
-
 
   public PieceColor color() {
     return color;
