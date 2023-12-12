@@ -25,6 +25,7 @@ public class Pawn extends Piece {
         0,
         2,
         MoveRequirement.PIECE_NEVER_MOVED,
+        MoveRequirement.REQUIRES_EMPTY_RANK,
         MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE
       )
     );

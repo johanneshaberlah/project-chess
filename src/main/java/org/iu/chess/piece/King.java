@@ -3,7 +3,6 @@ package org.iu.chess.piece;
 import org.iu.chess.move.MoveRequirement;
 import org.iu.chess.move.RelativeMoveWithRequirement;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
