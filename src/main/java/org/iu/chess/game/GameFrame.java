@@ -1,10 +1,9 @@
-package org.iu.chess.ui;
+package org.iu.chess.game;
 
 import com.google.common.base.Preconditions;
 import org.iu.chess.board.Board;
 import org.iu.chess.board.BoardFactory;
-import org.iu.chess.game.ChessGame;
-import org.iu.chess.game.GamePanel;
+import org.iu.chess.piece.PieceColor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,9 +12,9 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChessBoardFrame extends JFrame {
+public class GameFrame extends JFrame {
 
-  private final Board board;
+  private final ChessGame chessGame;
   private final JLabel timerLabel;
   private final JLabel aboveBoardTimerLabel;
   private final JLabel playerNameLabel; // Hinzugefügtes JLabel für den Spielername
@@ -23,14 +22,12 @@ public class ChessBoardFrame extends JFrame {
 
   private final JPanel iconsPanel;
   private final JPanel iconsPanel2;
-  private int remainingTimeInSeconds = 5 * 60;
-  private int aboveBoardRemainingTimeInSeconds = 5 * 60;
 
   private ArrayList<ImageIcon> beatenPiecesWhite = new ArrayList<ImageIcon>();
   private ArrayList<ImageIcon> beatenPiecesBlack = new ArrayList<ImageIcon>();
 
-  private ChessBoardFrame(Board board) {
-    this.board = board;
+  private GameFrame(ChessGame game) {
+    this.chessGame = game;
 
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setTitle("Schach");
@@ -48,7 +45,7 @@ public class ChessBoardFrame extends JFrame {
     aboveBoardTimerLabel.setHorizontalAlignment(JLabel.CENTER);
 
     //Test
-    for (var i = 0; i < 16; i++ ){
+    for (var i = 0; i < 16; i++) {
 
       ImageIcon icon = new ImageIcon("src/main/resources/pieces/blackpawn.png");
       addBeatenPiecesWhite(new ImageIcon(icon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
@@ -56,7 +53,7 @@ public class ChessBoardFrame extends JFrame {
 
     iconsPanel = createIconsLabel(beatenPiecesWhite);
 
-    for (var i = 0; i < 16; i++ ){
+    for (var i = 0; i < 16; i++) {
       ImageIcon icon = new ImageIcon("src/main/resources/pieces/whitepawn.png");
       addBeatenPieceBlack(new ImageIcon(icon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
     }
@@ -73,78 +70,68 @@ public class ChessBoardFrame extends JFrame {
     secondPlayerNameLabel.setHorizontalAlignment(JLabel.CENTER);
 
     // Initialize the BoardPanel and add it to the container
-    GamePanel chessBoardPanel = new GamePanel(ChessGame.startingPosition());
+    GamePanel chessBoardPanel = new GamePanel(chessGame);
     boardPanelContainer.add(chessBoardPanel, BorderLayout.CENTER);
-
-    // Create a panel for the timers on the right
-    JPanel timersPanel = new JPanel(new GridBagLayout());
-    GridBagConstraints gbc = new GridBagConstraints();
-
-    gbc.gridx = 0;
-    gbc.gridy = 0;
-    gbc.anchor = GridBagConstraints.PAGE_START;
-    gbc.insets = new Insets(0, 0, 50, 20);
-    timersPanel.add(iconsPanel, gbc);
-
-    gbc.gridx = 0;
-    gbc.gridy = 1;
-    gbc.anchor = GridBagConstraints.CENTER;
-    gbc.insets = new Insets(0, 0, 10, 20); // Fügt zusätzlichen vertikalen Abstand unterhalb des Player 1 Timers hinzu
-    timersPanel.add(timerLabel, gbc);
-
-    gbc.gridx = 0;
-    gbc.gridy = 2;
-    gbc.anchor = GridBagConstraints.CENTER;
-    gbc.insets = new Insets(0, 0, 60, 20);
-    timersPanel.add(playerNameLabel, gbc);
-
-    gbc.gridx = 0;
-    gbc.gridy = 3;
-    gbc.anchor = GridBagConstraints.CENTER;
-    gbc.insets = new Insets(60, 0, 0, 20);
-    timersPanel.add(secondPlayerNameLabel, gbc);
-
-    gbc.gridx = 0;
-    gbc.gridy = 4; // Sie können den GridY-Wert entsprechend anpassen
-    gbc.anchor = GridBagConstraints.CENTER;
-    gbc.insets = new Insets(10, 0, 0, 20);
-    timersPanel.add(aboveBoardTimerLabel, gbc);
-
-    gbc.gridx = 0;
-    gbc.gridy = 5; // Sie können den GridY-Wert entsprechend anpassen
-    gbc.anchor = GridBagConstraints.PAGE_END;
-    gbc.insets = new Insets(50, 0, 0, 20);
-    timersPanel.add(iconsPanel2, gbc);
-
-
-
-    // Add the container to the frame
     add(boardPanelContainer, BorderLayout.CENTER);
-    add(timersPanel, BorderLayout.EAST);
-
-    // Use javax.swing.Timer to update the timer label for Player 1 every second
-    Timer timer = new Timer(1000, new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        updateTimerLabel();
-      }
-    });
-    timer.start();
-
-    // Use javax.swing.Timer to update the timer above the board for Player 2 every second
-    Timer aboveBoardTimer = new Timer(1000, new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        updateAboveBoardTimerLabel();
-      }
-    });
-    aboveBoardTimer.start();
-
-    setMinimumSize(new Dimension( 1050, 840)); // Adjusted width to accommodate the timers
+    addTimers();
+    setMinimumSize(new Dimension(1050, 840)); // Adjusted width to accommodate the timers
     setResizable(false);
 
     pack();
     setLocationRelativeTo(null); // Center the frame
+  }
+
+  private void addTimers() {
+    chessGame.timingStrategy().ifPresent(timing -> {
+      // Create a panel for the timers on the right
+      JPanel timersPanel = new JPanel(new GridBagLayout());
+      GridBagConstraints gbc = new GridBagConstraints();
+
+      gbc.gridx = 0;
+      gbc.gridy = 0;
+      gbc.anchor = GridBagConstraints.PAGE_START;
+      gbc.insets = new Insets(0, 0, 50, 20);
+      timersPanel.add(iconsPanel, gbc);
+
+      gbc.gridx = 0;
+      gbc.gridy = 1;
+      gbc.anchor = GridBagConstraints.CENTER;
+      gbc.insets = new Insets(0, 0, 10, 20); // Fügt zusätzlichen vertikalen Abstand unterhalb des Player 1 Timers hinzu
+      timersPanel.add(timerLabel, gbc);
+
+      gbc.gridx = 0;
+      gbc.gridy = 2;
+      gbc.anchor = GridBagConstraints.CENTER;
+      gbc.insets = new Insets(0, 0, 60, 20);
+      timersPanel.add(playerNameLabel, gbc);
+
+      gbc.gridx = 0;
+      gbc.gridy = 3;
+      gbc.anchor = GridBagConstraints.CENTER;
+      gbc.insets = new Insets(60, 0, 0, 20);
+      timersPanel.add(secondPlayerNameLabel, gbc);
+
+      gbc.gridx = 0;
+      gbc.gridy = 4; // Sie können den GridY-Wert entsprechend anpassen
+      gbc.anchor = GridBagConstraints.CENTER;
+      gbc.insets = new Insets(10, 0, 0, 20);
+      timersPanel.add(aboveBoardTimerLabel, gbc);
+
+      gbc.gridx = 0;
+      gbc.gridy = 5; // Sie können den GridY-Wert entsprechend anpassen
+      gbc.anchor = GridBagConstraints.PAGE_END;
+      gbc.insets = new Insets(50, 0, 0, 20);
+      timersPanel.add(iconsPanel2, gbc);
+
+      // Add the container to the frame
+      add(timersPanel, BorderLayout.EAST);
+
+      // Use javax.swing.Timer to update the timer label for Player 1 every second
+      Timer timer = new Timer(1000, tick -> {
+        updateTimersText();
+      });
+      timer.start();
+    });
   }
 
   private JLabel createStyledTimerLabel() {
@@ -181,62 +168,43 @@ public class ChessBoardFrame extends JFrame {
     return panel;
   }
 
-  public  void addBeatenPiecesWhite(ImageIcon icon)
-  {
-    if(beatenPiecesWhite.size() < 16)
+  public void addBeatenPiecesWhite(ImageIcon icon) {
+    if (beatenPiecesWhite.size() < 16)
       beatenPiecesWhite.add(icon);
   }
 
 
-  public  void addBeatenPieceBlack(ImageIcon icon)
-  {
-    if(beatenPiecesBlack.size() < 16)
+  public void addBeatenPieceBlack(ImageIcon icon) {
+    if (beatenPiecesBlack.size() < 16)
       beatenPiecesBlack.add(icon);
   }
 
-
-
-
-  private void updateTimerLabel() {
-    int minutes = remainingTimeInSeconds / 60;
-    int seconds = remainingTimeInSeconds % 60;
-
-    String timeString = String.format("%02d:%02d", minutes, seconds);
-    timerLabel.setText(timeString);
-
-    if (remainingTimeInSeconds > 0) {
-      remainingTimeInSeconds--;
-    } else {
-      // Timer abgelaufen
-      timerLabel.setText("Player 1 Time's up!");
-    }
+  private void updateTimersText() {
+    chessGame.playerWithColor(PieceColor.WHITE).clock().ifPresent(clock -> {
+      long minutes = clock.currentTimeRemaining() / 60;
+      long seconds = clock.currentTimeRemaining() % 60;
+      String timeString = String.format("%02d:%02d", minutes, seconds);
+      aboveBoardTimerLabel.setText(timeString);
+    });
+    chessGame.playerWithColor(PieceColor.BLACK).clock().ifPresent(clock -> {
+      long minutes = clock.currentTimeRemaining() / 60;
+      long seconds = clock.currentTimeRemaining() % 60;
+      String timeString = String.format("%02d:%02d", minutes, seconds);
+      timerLabel.setText(timeString);
+    });
   }
 
-  private void updateAboveBoardTimerLabel() {
-    int minutes = aboveBoardRemainingTimeInSeconds / 60;
-    int seconds = aboveBoardRemainingTimeInSeconds % 60;
-
-    String timeString = String.format("%02d:%02d", minutes, seconds);
-    aboveBoardTimerLabel.setText(timeString);
-
-    if (aboveBoardRemainingTimeInSeconds > 0) {
-      aboveBoardRemainingTimeInSeconds--;
-    } else {
-      // Timer above board abgelaufen
-      aboveBoardTimerLabel.setText("Player 2 Time's up!");
-    }
-  }
-
-  public static ChessBoardFrame of(Board board) {
-    Preconditions.checkNotNull(board);
-    return new ChessBoardFrame(board);
+  public static GameFrame of(ChessGame game) {
+    Preconditions.checkNotNull(game);
+    return new GameFrame(game);
   }
 
   public static void main(String[] args) {
     SwingUtilities.invokeLater(() -> {
-      Board board = BoardFactory.create("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-      ChessBoardFrame chessBoardFrame = ChessBoardFrame.of(board);
+      ChessGame game = ChessGame.startingPosition();
+      GameFrame chessBoardFrame = GameFrame.of(game);
       chessBoardFrame.setVisible(true);
+      game.start();
     });
   }
 }

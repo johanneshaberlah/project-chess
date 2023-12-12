@@ -8,8 +8,10 @@ import org.iu.chess.game.player.PlayerClock;
 import org.iu.chess.game.player.PlayerMove;
 import org.iu.chess.game.player.PlayerTuple;
 import org.iu.chess.move.IllegalMoveException;
+import org.iu.chess.piece.Piece;
 import org.iu.chess.piece.PieceColor;
 
+import java.time.Clock;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Stack;
@@ -30,15 +32,15 @@ public class ChessGame {
     this.players = players;
     this.moves = moves;
     this.position = position;
+  }
 
-    position.registerGameEndListener(winner -> {
-
-    });
+  public void start() {
+    playerWithColor(PieceColor.WHITE).clock().ifPresent(PlayerClock::beginMove);
   }
 
   public void performMove(PlayerMove move) throws IllegalMoveException, InvalidGameActionException {
     // Checks if the same player tries to move twice
-    if (!moves.empty() && move.player().equals(moves.peek().player())) {
+    if (!nextMove().equals(players.playerColor(move.player()))) {
       throw InvalidGameActionException.create(move.move(), "It is not the turn of " + move.player());
     }
     // Finish the current move (stop clock, perform the move on the board, push it to the history)
@@ -55,6 +57,14 @@ public class ChessGame {
       artificialPlayer.makeMove(this, players.playerColor(artificialPlayer));
     }
   }
+
+  public PieceColor nextMove() {
+    if (moves.isEmpty()) {
+      return PieceColor.WHITE;
+    }
+    return players.playerColor(players.otherPlayer(moves.peek().player()));
+  }
+
   public Board getPosition() {
     return position;
   }
@@ -63,19 +73,23 @@ public class ChessGame {
     return color.equals(PieceColor.WHITE) ? players.white() : players.black();
   }
 
+  public Optional<GameTimingStrategy> timingStrategy() {
+    return timingStrategy;
+  }
+
   public static ChessGame startingPosition() {
     return new ChessGame(
-      Optional.empty(),
+      Optional.of(new GameTimingStrategy(3, 0)),
       new PlayerTuple(
         new Player(
           "Weiß",
           new HashSet<>(),
-          Optional.empty()
+          Optional.of(PlayerClock.fromStrategy(new GameTimingStrategy(3, 0)))
         ),
         new Player(
           "Schwarz",
           new HashSet<>(),
-          Optional.empty()
+          Optional.of(PlayerClock.fromStrategy(new GameTimingStrategy(3, 0)))
         )
       ),
       new Stack<>(),

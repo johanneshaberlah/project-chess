@@ -1,32 +1,49 @@
 package org.iu.chess.game.player;
 
+import com.google.common.base.Stopwatch;
 import org.iu.chess.game.GameTimingStrategy;
 
-public class PlayerClock {
-  private int timeRemaining;
-  private long moveBeginTime;
+import java.util.concurrent.TimeUnit;
 
-  private PlayerClock(int timeRemaining) {
+public class PlayerClock {
+  private final int increment;
+  private int timeRemaining;
+  private Stopwatch moveStopwatch;
+
+  private PlayerClock(int timeRemaining, int increment) {
     this.timeRemaining = timeRemaining;
+    this.increment = increment;
   }
 
   public void beginMove() {
-    moveBeginTime = System.currentTimeMillis();
+    System.out.println("beginMove()");
+    moveStopwatch = Stopwatch.createStarted();
+  }
+
+  public long currentTimeRemaining() {
+    return timeRemaining - (moveStopwatch == null ? 0 : moveStopwatch.elapsed(TimeUnit.SECONDS));
   }
 
   public void finishMove() {
-    timeRemaining -= (System.currentTimeMillis() - moveBeginTime) / 1000;
+    System.out.println("finishMove()");
+    timeRemaining -= moveStopwatch.elapsed(TimeUnit.SECONDS);
+    moveStopwatch = null;
+    this.addIncrement();
   }
 
   public int timeRemaining() {
     return timeRemaining;
   }
 
-  public void addIncrement(GameTimingStrategy strategy) {
-    timeRemaining += strategy.increment();
+  public int increment() {
+    return increment;
+  }
+
+  private void addIncrement() {
+    timeRemaining += increment;
   }
 
   public static PlayerClock fromStrategy(GameTimingStrategy strategy) {
-    return new PlayerClock(strategy.initialTime());
+    return new PlayerClock(strategy.initialTime() * 60, strategy.increment());
   }
 }
