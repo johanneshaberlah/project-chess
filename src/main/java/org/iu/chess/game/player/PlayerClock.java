@@ -16,7 +16,6 @@ public class PlayerClock {
   }
 
   public void beginMove() {
-    System.out.println("beginMove()");
     moveStopwatch = Stopwatch.createStarted();
   }
 
@@ -26,9 +25,11 @@ public class PlayerClock {
 
   public void finishMove() {
     System.out.println("finishMove()");
-    timeRemaining -= moveStopwatch.elapsed(TimeUnit.SECONDS);
-    moveStopwatch = null;
-    this.addIncrement();
+    if (moveStopwatch != null) {
+      timeRemaining -= moveStopwatch.elapsed(TimeUnit.SECONDS);
+      moveStopwatch = null;
+      this.addIncrement();
+    }
   }
 
   public int timeRemaining() {

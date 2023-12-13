@@ -1,8 +1,10 @@
 package org.iu.chess.game;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 import org.iu.chess.board.Board;
 import org.iu.chess.board.BoardFactory;
+import org.iu.chess.piece.Piece;
 import org.iu.chess.piece.PieceColor;
 
 import javax.swing.*;
@@ -11,8 +13,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class GameFrame extends JFrame {
+  private Map<Piece, ImageIcon> imageCache = Maps.newHashMap();
 
   private final ChessGame chessGame;
   private final JLabel timerLabel;
@@ -22,9 +27,6 @@ public class GameFrame extends JFrame {
 
   private final JPanel iconsPanel;
   private final JPanel iconsPanel2;
-
-  private ArrayList<ImageIcon> beatenPiecesWhite = new ArrayList<ImageIcon>();
-  private ArrayList<ImageIcon> beatenPiecesBlack = new ArrayList<ImageIcon>();
 
   private GameFrame(ChessGame game) {
     this.chessGame = game;
@@ -44,20 +46,8 @@ public class GameFrame extends JFrame {
     aboveBoardTimerLabel = createStyledTimerLabel();
     aboveBoardTimerLabel.setHorizontalAlignment(JLabel.CENTER);
 
-    //Test
-    for (var i = 0; i < 16; i++) {
-
-      ImageIcon icon = new ImageIcon("src/main/resources/pieces/blackpawn.png");
-      addBeatenPiecesWhite(new ImageIcon(icon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
-    }
-
-    iconsPanel = createIconsLabel(beatenPiecesWhite);
-
-    for (var i = 0; i < 16; i++) {
-      ImageIcon icon = new ImageIcon("src/main/resources/pieces/whitepawn.png");
-      addBeatenPieceBlack(new ImageIcon(icon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
-    }
-    iconsPanel2 = createIconsLabel(beatenPiecesBlack);
+    iconsPanel = createIconsLabel();
+    iconsPanel2 = createIconsLabel();
 
     // Initialize the JLabel for the player name
     playerNameLabel = new JLabel("Player 2");
@@ -73,6 +63,7 @@ public class GameFrame extends JFrame {
     GamePanel chessBoardPanel = new GamePanel(chessGame);
     boardPanelContainer.add(chessBoardPanel, BorderLayout.CENTER);
     add(boardPanelContainer, BorderLayout.CENTER);
+    this.imageCache = chessBoardPanel.imageCache;
     addTimers();
     setMinimumSize(new Dimension(1050, 840)); // Adjusted width to accommodate the timers
     setResizable(false);
@@ -130,6 +121,7 @@ public class GameFrame extends JFrame {
       Timer timer = new Timer(1000, tick -> {
         updateTimersText();
       });
+      chessGame.players().asSet().forEach(player -> player.lostPieces().addChangeListener(this::showLostPiece));
       timer.start();
     });
   }
@@ -155,28 +147,17 @@ public class GameFrame extends JFrame {
     return label;
   }
 
-  private static JPanel createIconsLabel(List<ImageIcon> imageIcons) {
-
-    JPanel panel = new JPanel(new GridLayout(2, 8, 2, 2));
-
-    // Add the scaled icon to all labels in the panel
-    imageIcons.forEach(i -> {
-      JLabel label = new JLabel(i);
-      panel.add(label);
-    });
-
-    return panel;
+  private static JPanel createIconsLabel() {
+    return new JPanel(new GridLayout(2, 8, 2, 2));
   }
 
-  public void addBeatenPiecesWhite(ImageIcon icon) {
-    if (beatenPiecesWhite.size() < 16)
-      beatenPiecesWhite.add(icon);
-  }
-
-
-  public void addBeatenPieceBlack(ImageIcon icon) {
-    if (beatenPiecesBlack.size() < 16)
-      beatenPiecesBlack.add(icon);
+  private void showLostPiece(Piece piece) {
+    JLabel label = new JLabel(new ImageIcon(imageCache.get(piece).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+    if (piece.color().equals(PieceColor.BLACK)) {
+      iconsPanel2.add(label);
+    } else {
+      iconsPanel.add(label);
+    }
   }
 
   private void updateTimersText() {

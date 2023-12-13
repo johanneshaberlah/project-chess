@@ -11,7 +11,7 @@ import java.awt.*;
 import java.util.Map;
 
 public class GamePanel extends JPanel {
-  private final Map<Piece, ImageIcon> imageCache = Maps.newHashMap();
+  public Map<Piece, ImageIcon> imageCache = Maps.newHashMap();
 
   private final ChessGame game;
 

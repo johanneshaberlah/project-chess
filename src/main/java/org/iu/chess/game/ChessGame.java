@@ -44,7 +44,6 @@ public class ChessGame {
       throw InvalidGameActionException.create(move.move(), "It is not the turn of " + move.player());
     }
     // Finish the current move (stop clock, perform the move on the board, push it to the history)
-    move.player().clock().ifPresent(PlayerClock::finishMove);
     var targetPiece = position.pieceAt(move.move().to());
     position.performMove(move.move());
     moves.push(move);
@@ -52,6 +51,7 @@ public class ChessGame {
 
     // Prepare move for next player (Start Clock and if it is an artificial player, make the move)
     var otherPlayer = players.otherPlayer(move.player());
+    move.player().clock().ifPresent(PlayerClock::finishMove);
     otherPlayer.clock().ifPresent(PlayerClock::beginMove);
     if (otherPlayer instanceof ArtificialPlayer artificialPlayer) {
       artificialPlayer.makeMove(this, players.playerColor(artificialPlayer));
@@ -71,6 +71,10 @@ public class ChessGame {
 
   public Player playerWithColor(PieceColor color) {
     return color.equals(PieceColor.WHITE) ? players.white() : players.black();
+  }
+
+  public PlayerTuple players() {
+    return players;
   }
 
   public Optional<GameTimingStrategy> timingStrategy() {

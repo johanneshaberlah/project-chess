@@ -1,7 +1,6 @@
 package org.iu.chess.move;
 
 import org.iu.chess.Square;
-import org.iu.chess.board.Board;
 import org.iu.chess.game.ChessGame;
 import org.iu.chess.game.InvalidGameActionException;
 import org.iu.chess.game.player.PlayerMove;
