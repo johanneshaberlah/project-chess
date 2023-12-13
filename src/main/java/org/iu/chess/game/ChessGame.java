@@ -81,6 +81,26 @@ public class ChessGame {
     return timingStrategy;
   }
 
+  public static ChessGame withSelectedTime(int minutes, int increment) {
+    return new ChessGame(
+      Optional.of(new GameTimingStrategy(minutes, increment)),
+      new PlayerTuple(
+        new Player(
+          "Weiß",
+          new HashSet<>(),
+          Optional.of(PlayerClock.fromStrategy(new GameTimingStrategy(minutes, increment)))
+        ),
+        new Player(
+          "Schwarz",
+          new HashSet<>(),
+          Optional.of(PlayerClock.fromStrategy(new GameTimingStrategy(minutes, increment)))
+        )
+      ),
+      new Stack<>(),
+      BoardFactory.create("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+    );
+  }
+
   public static ChessGame startingPosition() {
     return new ChessGame(
       Optional.of(new GameTimingStrategy(3, 0)),

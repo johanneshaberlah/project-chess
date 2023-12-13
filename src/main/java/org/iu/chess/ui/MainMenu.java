@@ -1,10 +1,15 @@
 package org.iu.chess.ui;
 
+import org.iu.chess.game.ChessGame;
+import org.iu.chess.game.GameFrame;
+
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 import java.util.Arrays;
 import java.util.List;
 
@@ -61,10 +66,10 @@ public class MainMenu extends JFrame {
     Font customFont = new Font("Arial", Font.BOLD, 16);
     play1v1Button.setFont(customFont);
 
-    time5MinutesButton = createStyledButton("5 minuten");
-    time10MinutesButton = createStyledButton("10 minuten");
-    time15MinutesButton = createStyledButton("15 minuten");
-    timeInfinityButton = createStyledButton("unbegrenzt");
+    time5MinutesButton = createStyledButton("5 Minuten (+ 0)");
+    time10MinutesButton = createStyledButton("10 Minuten (+ 0)");
+    time15MinutesButton = createStyledButton("15 Minuten (+ 0)");
+    timeInfinityButton = createStyledButton("Correspondence / Unbegrenzt");
 
     loadGameButton = createStyledButton("Spiel laden");
     loadGameButton.setFont(customFont);
@@ -116,7 +121,10 @@ public class MainMenu extends JFrame {
       int selectedTime = getSelectedTime();
       String selectedDifficulty = getSelectedDifficulty();
 
-      JOptionPane.showMessageDialog(MainMenu.this, "Spielmodus: "+getSelectedMode()+ " Zeit: "+ (selectedTime== -1? "unbegrenzt": (selectedTime/60+" Minuten")) + (play1v1Button.isSelected()? "":", Computer-Schwierigkeit: " + selectedDifficulty));
+      ChessGame chessGame = ChessGame.withSelectedTime(selectedTime, 3);
+      GameFrame frame = GameFrame.of(chessGame);
+      frame.setVisible(true);
+      chessGame.start();
     });
 
     ActionListener aiButtonListener = e -> handleAIDifficultyButtonClick(e.getActionCommand(), "AI " + e.getActionCommand() + " gewählt", (JButton) e.getSource());
@@ -154,14 +162,12 @@ public class MainMenu extends JFrame {
     selectedMode = difficulty;
     updateAiButtonState();
     updateButtonBackground(button);
-    JOptionPane.showMessageDialog(MainMenu.this, message);
   }
 
   private void handleTimeOptionButtonClick(String timeOption, String message, JButton button) {
     selectedMode = timeOption;
     updateTimeButtonState();
     updateButtonBackground(button);
-    JOptionPane.showMessageDialog(MainMenu.this, message);
   }
 
   private JButton createStyledButton(String text) {
@@ -197,10 +203,10 @@ public class MainMenu extends JFrame {
 
   private void updateTimeButtonState() {
     System.out.println(selectedMode);
-    time5MinutesButton.setSelected("5 minuten".equals(selectedMode));
-    time10MinutesButton.setSelected("10 minuten".equals(selectedMode));
-    time15MinutesButton.setSelected("15 minuten".equals(selectedMode));
-    timeInfinityButton.setSelected("unbegrenzt".equals(selectedMode));
+    time5MinutesButton.setSelected("5 Minuten (+ 0)".equals(selectedMode));
+    time10MinutesButton.setSelected("10 Minuten (+ 0)".equals(selectedMode));
+    time15MinutesButton.setSelected("15 Minuten (+ 0)".equals(selectedMode));
+    timeInfinityButton.setSelected("Correspondence / Unbegrenzt".equals(selectedMode));
   }
 
   private void updateButtonBackground(JButton clickedButton) {
@@ -219,9 +225,9 @@ public class MainMenu extends JFrame {
   }
 
   private int getSelectedTime() {
-    if (time5MinutesButton.isSelected()) return 300;
-    else if (time10MinutesButton.isSelected()) return 600;
-    else if (time15MinutesButton.isSelected()) return 900;
+    if (time5MinutesButton.isSelected()) return 5;
+    else if (time10MinutesButton.isSelected()) return 10;
+    else if (time15MinutesButton.isSelected()) return 15;
     else return -1;
   }
 
