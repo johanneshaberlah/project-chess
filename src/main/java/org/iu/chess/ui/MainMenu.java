@@ -4,14 +4,11 @@ import org.iu.chess.game.ChessGame;
 import org.iu.chess.game.GameFrame;
 
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowStateListener;
 import java.util.Arrays;
 import java.util.List;
+
 
 enum GameMode {
   ONE_VS_ONE,
@@ -47,6 +44,7 @@ public class MainMenu extends JFrame {
   private String selectedMode = "";
 
   public MainMenu() {
+    styledButton sb = new styledButton();
     setTitle("Chess Game - Main Menu");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setSize(530, 330);
@@ -61,17 +59,17 @@ public class MainMenu extends JFrame {
     playPanel.setLayout(new GridLayout(7, 1));
     playPanel.setBackground(new Color(218, 218, 218));
 
-    play1v1Button = createStyledButton("gegeneinander Spielen");
+    play1v1Button = sb.createStyledButton("gegeneinander Spielen");
 
     Font customFont = new Font("Arial", Font.BOLD, 16);
     play1v1Button.setFont(customFont);
 
-    time5MinutesButton = createStyledButton("5 Minuten (+ 0)");
-    time10MinutesButton = createStyledButton("10 Minuten (+ 0)");
-    time15MinutesButton = createStyledButton("15 Minuten (+ 0)");
-    timeInfinityButton = createStyledButton("Correspondence / Unbegrenzt");
+    time5MinutesButton = sb.createStyledButton("5 Minuten (+ 0)");
+    time10MinutesButton = sb.createStyledButton("10 Minuten (+ 0)");
+    time15MinutesButton = sb.createStyledButton("15 Minuten (+ 0)");
+    timeInfinityButton = sb.createStyledButton("Correspondence / Unbegrenzt");
 
-    loadGameButton = createStyledButton("Spiel laden");
+    loadGameButton = sb.createStyledButton("Spiel laden");
     loadGameButton.setFont(customFont);
 
     playPanel.add(play1v1Button);
@@ -89,14 +87,14 @@ public class MainMenu extends JFrame {
     aiPanel.setLayout(new GridLayout(7, 1));
     aiPanel.setBackground(new Color(218, 218, 218));
 
-    playAgainstComputerButton = createStyledButton("gegen den Computer spielen");
+    playAgainstComputerButton = sb.createStyledButton("gegen den Computer spielen");
     playAgainstComputerButton.setFont(customFont);
 
-    aiEasyButton = createStyledButton("Anfänger");
-    aiMediumButton = createStyledButton("Fortgeschritten");
-    aiHardButton = createStyledButton("Experte");
+    aiEasyButton = sb.createStyledButton("Anfänger");
+    aiMediumButton = sb.createStyledButton("Fortgeschritten");
+    aiHardButton = sb.createStyledButton("Experte");
 
-    startGameButton = createStyledButton("Spiel starten");
+    startGameButton = sb.createStyledButton("Spiel starten");
 
     startGameButton.setFont(customFont);
 
@@ -168,26 +166,6 @@ public class MainMenu extends JFrame {
     selectedMode = timeOption;
     updateTimeButtonState();
     updateButtonBackground(button);
-  }
-
-  private JButton createStyledButton(String text) {
-    JButton button = new JButton(text);
-    button.setUI(new BasicButtonUI() {
-      @Override
-      protected void paintButtonPressed(Graphics g, AbstractButton b) {
-        g.setColor(new Color(124, 124, 124)); // Darkened background color
-        g.fillRect(0, 0, b.getWidth(), b.getHeight());
-      }
-    });
-    button.setBorderPainted(false);
-    button.setFocusPainted(false);
-    button.setContentAreaFilled(false);
-
-    int buttonWidth = 150;
-    int buttonHeight = 40;
-    button.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
-
-    return button;
   }
 
   private void updateGamemodeButtonState() {
