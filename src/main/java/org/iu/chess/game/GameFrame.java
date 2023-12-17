@@ -2,19 +2,12 @@ package org.iu.chess.game;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import org.iu.chess.board.Board;
-import org.iu.chess.board.BoardFactory;
 import org.iu.chess.piece.Piece;
 import org.iu.chess.piece.PieceColor;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class GameFrame extends JFrame {
   private Map<Piece, ImageIcon> imageCache = Maps.newHashMap();
@@ -118,9 +111,7 @@ public class GameFrame extends JFrame {
       add(timersPanel, BorderLayout.EAST);
 
       // Use javax.swing.Timer to update the timer label for Player 1 every second
-      Timer timer = new Timer(1000, tick -> {
-        updateTimersText();
-      });
+      Timer timer = new Timer(1000, tick -> updateTimersText());
       chessGame.players().asSet().forEach(player -> player.lostPieces().addChangeListener(this::showLostPiece));
       timer.start();
     });
@@ -148,11 +139,15 @@ public class GameFrame extends JFrame {
   }
 
   private static JPanel createIconsLabel() {
-    return new JPanel(new GridLayout(2, 8, 2, 2));
+
+    JPanel iconsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    iconsPanel.setPreferredSize(new Dimension(150, 100));
+    return  iconsPanel;
   }
 
   private void showLostPiece(Piece piece) {
-    JLabel label = new JLabel(new ImageIcon(imageCache.get(piece).getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+    JLabel label = new JLabel(new ImageIcon(imageCache.get(piece).getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH)));
+
     if (piece.color().equals(PieceColor.BLACK)) {
       iconsPanel2.add(label);
     } else {
