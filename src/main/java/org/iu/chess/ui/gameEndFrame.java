@@ -4,7 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 
   //TODO Wer hat gewonnen
-  //TODO Spiel speichern
   //TODO Spiel beenden
   //TODO getWinner() aus main game --> Surrender/Patt etc-
 public class gameEndFrame extends JFrame{
@@ -14,8 +13,6 @@ public class gameEndFrame extends JFrame{
   private JButton mainMenuButton;
 
   private JPanel winnerDisplay;
-
-
 
   public gameEndFrame() {
     styledButton sb = new styledButton();
@@ -28,20 +25,6 @@ public class gameEndFrame extends JFrame{
     JPanel panel = new JPanel();
     panel.setLayout(new GridLayout(1, 2));
 
-    /*JPanel winnerDisplay = new JPanel();
-    winnerDisplay.setLayout(new GridLayout(2,1,0,-80));//find fitting layout vgap 10
-    winnerDisplay.setBackground(new Color(218, 218, 218));
-
-    JLabel gameEndImageLabel = new JLabel();
-    gameEndImageLabel.setIcon(getGameEndIcon());
-    gameEndImageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
-    JLabel gameEndMessageLabel = new JLabel(getGameEndMessage());
-    gameEndMessageLabel.setFont(new Font("Arial", Font.BOLD, 16));
-    gameEndMessageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
-    winnerDisplay.add(gameEndImageLabel);
-    winnerDisplay.add(gameEndMessageLabel);*/
 
     winnerDisplay = new JPanel();
     winnerDisplay.setLayout(new GridBagLayout());
@@ -67,7 +50,6 @@ public class gameEndFrame extends JFrame{
 
     gbc.gridy = 1;
     winnerDisplay.add(gameEndMessageLabel, gbc);
-    //////////
     panel.add(winnerDisplay);
 
     JPanel gameEndButtons =new JPanel();
