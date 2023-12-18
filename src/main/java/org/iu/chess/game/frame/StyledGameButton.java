@@ -1,10 +1,10 @@
-package org.iu.chess.ui;
+package org.iu.chess.game.frame;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
 
-public class styledButton {
+public class StyledGameButton {
   public JButton createStyledButton(String textContent) {
     JButton button = new JButton(textContent);
     button.setUI(new BasicButtonUI() {

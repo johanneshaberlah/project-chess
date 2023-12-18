@@ -45,9 +45,6 @@ public class Board {
       throw IllegalMoveException.of(move);
     }
     commitMove(this, move, piece);
-    if (isCheckMate(this, piece.otherColor())) {
-      gameEndListeners.forEach(listener -> listener.onGameEnd(Optional.of(piece.otherColor())));
-    }
     piece.declareMoved();
   }
 
@@ -91,27 +88,32 @@ public class Board {
       });
   }
 
-  private boolean isCheckMate(Board board, PieceColor pieceColor) {
-    if (isCheck(board, pieceColor)) {
-      for (Square square : piecesWithColor(pieceColor)) {
-        var piece = board.pieceAt(square);
-        var legalMoves = piece.map(value -> value.legalMoves(board, square));
-        if (!legalMoves.isPresent()) {
-          continue;
-        }
-        for (Move move : legalMoves.get()) {
-          // Run Simulation
-          Board simulationBoard = Board.of(new HashMap<>(squares));
-          commitMove(simulationBoard, move, piece.get());
+  public boolean isCheckMate(Board board, PieceColor pieceColor) {
+    return isCheck(board, pieceColor) && isMate(board, pieceColor);
+  }
 
-          if (!isCheck(simulationBoard, piece.get().color())) {
-            return false;
-          }
+  public boolean isStaleMate(Board board, PieceColor pieceColor) {
+    return !isCheck(board, pieceColor) && isMate(board, pieceColor);
+  }
+
+  public boolean isMate(Board board, PieceColor pieceColor) {
+    for (Square square : piecesWithColor(pieceColor)) {
+      var piece = board.pieceAt(square);
+      var legalMoves = piece.map(value -> value.legalMoves(board, square));
+      if (!legalMoves.isPresent()) {
+        continue;
+      }
+      for (Move move : legalMoves.get()) {
+        // Run Simulation
+        Board simulationBoard = Board.of(new HashMap<>(squares));
+        commitMove(simulationBoard, move, piece.get());
+
+        if (!isCheck(simulationBoard, piece.get().color())) {
+          return false;
         }
       }
-      return true;
     }
-    return false;
+    return true;
   }
 
   public Set<Square> piecesWithColor(PieceColor color) {

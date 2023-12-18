@@ -1,17 +1,17 @@
-package org.iu.chess.ui;
+package org.iu.chess.game.frame;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class gamePausedFrame extends JFrame {
+public class GamePausedFrame extends JFrame {
   //buttons: save, new game, end game
   private JButton saveGameButton;
   private JButton continueGameButton;
   private JButton mainMenuButton;
   private JButton exitGameButton;
 
-  public gamePausedFrame() {
-    styledButton sb = new styledButton();
+  public GamePausedFrame() {
+    StyledGameButton sb = new StyledGameButton();
     setTitle("Schach - Spiel pausiert");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setSize(265, 330);
@@ -57,7 +57,7 @@ public class gamePausedFrame extends JFrame {
 
   public static void main(String[] args) {
     SwingUtilities.invokeLater(() -> {
-      gamePausedFrame gamePausedFrame = new gamePausedFrame();
+      GamePausedFrame gamePausedFrame = new GamePausedFrame();
       gamePausedFrame.setVisible(true);
     });
   }

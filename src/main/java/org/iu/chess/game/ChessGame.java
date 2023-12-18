@@ -8,10 +8,9 @@ import org.iu.chess.game.player.PlayerClock;
 import org.iu.chess.game.player.PlayerMove;
 import org.iu.chess.game.player.PlayerTuple;
 import org.iu.chess.move.IllegalMoveException;
-import org.iu.chess.piece.Piece;
+import org.iu.chess.move.Move;
 import org.iu.chess.piece.PieceColor;
 
-import java.time.Clock;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Stack;
@@ -65,7 +64,14 @@ public class ChessGame {
     return players.playerColor(players.otherPlayer(moves.peek().player()));
   }
 
-  public Board getPosition() {
+  public Stack<PlayerMove> moves() {
+    // Since stacks are mutable we don't want to expose them publicly to avoid #clear calls
+    var movesCopy = new Stack<PlayerMove>();
+    moves.forEach(movesCopy::push);
+    return movesCopy;
+  }
+
+  public Board position() {
     return position;
   }
 

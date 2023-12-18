@@ -1,7 +1,6 @@
 package org.iu.chess.game;
 
 import com.google.common.collect.Maps;
-import org.iu.chess.board.Board;
 import org.iu.chess.move.LegalMovePreviewListener;
 import org.iu.chess.move.MoveExecutionListener;
 import org.iu.chess.piece.Piece;
@@ -26,7 +25,7 @@ public class GamePanel extends JPanel {
     super.paintComponent(g);
     int squareSize = Math.min(getWidth() / 8, getHeight() / 8);
 
-    game.getPosition().squares().forEach(square -> {
+    game.position().squares().forEach(square -> {
       Color squareColor = (square.rank() + square.file()) % 2 == 0 ? Color.LIGHT_GRAY : Color.WHITE;
       g.setColor(squareColor);
 
@@ -36,7 +35,7 @@ public class GamePanel extends JPanel {
 
       g.fillRect(x, y, squareSize, squareSize);
 
-      game.getPosition().pieceAt(square).ifPresent(piece -> {
+      game.position().pieceAt(square).ifPresent(piece -> {
         if (imageCache.containsKey(piece)) {
           imageCache.get(piece).paintIcon(this, g, x, y);
           return;

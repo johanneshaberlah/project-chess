@@ -1,7 +1,8 @@
-package org.iu.chess.ui;
+package org.iu.chess.game.frame;
 
 import org.iu.chess.game.ChessGame;
 import org.iu.chess.game.GameFrame;
+import org.iu.chess.game.GameMode;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,42 +10,23 @@ import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.List;
 
-
-enum GameMode {
-  ONE_VS_ONE,
-  COMPUTER
-}
-
-enum AiDifficulty {
-  EASY,
-  MEDIUM,
-  HARD
-}
-
-enum Time {
-  FIVE_MINUTES,
-  TEN_MINUTES,
-  FIFTEEN_MINUTES
-}
-
-public class MainMenu extends JFrame {
-
-  private JButton play1v1Button;
-  private JButton playAgainstComputerButton;
-  private JButton time5MinutesButton;
-  private JButton time10MinutesButton;
-  private JButton time15MinutesButton;
-  private JButton aiEasyButton;
-  private JButton aiMediumButton;
-  private JButton aiHardButton;
-  private JButton startGameButton;
-  private JButton timeInfinityButton;
-  private JButton loadGameButton;
+public class GameStartFrame extends JFrame {
+  private final JButton play1v1Button;
+  private final JButton playAgainstComputerButton;
+  private final JButton time5MinutesButton;
+  private final JButton time10MinutesButton;
+  private final JButton time15MinutesButton;
+  private final JButton aiEasyButton;
+  private final JButton aiMediumButton;
+  private final JButton aiHardButton;
+  private final JButton startGameButton;
+  private final JButton timeInfinityButton;
+  private final JButton loadGameButton;
 
   private String selectedMode = "";
 
-  public MainMenu() {
-    styledButton sb = new styledButton();
+  public GameStartFrame() {
+    StyledGameButton sb = new StyledGameButton();
     setTitle("Chess Game - Main Menu");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setSize(530, 330);
@@ -153,7 +135,7 @@ public class MainMenu extends JFrame {
     updateGamemodeButtonState();
     enableAiButtons(gameMode == GameMode.COMPUTER);
     updateButtonBackground(button);
-    JOptionPane.showMessageDialog(MainMenu.this, message);
+    // JOptionPane.showMessageDialog(GameStartFrame.this, message);
   }
 
   private void handleAIDifficultyButtonClick(String difficulty, String message, JButton button) {
@@ -220,12 +202,5 @@ public class MainMenu extends JFrame {
     if (play1v1Button.isSelected()) return "1v1";
     else if (playAgainstComputerButton.isSelected()) return "AI";
     else return "null";
-  }
-
-  public static void main(String[] args) {
-    SwingUtilities.invokeLater(() -> {
-      MainMenu mainMenu = new MainMenu();
-      mainMenu.setVisible(true);
-    });
   }
 }
