@@ -13,7 +13,7 @@ public class Knight extends Piece {
 
 
   private Knight(PieceColor color) {
-    super("Knight", color, 'N');
+    super("Knight", color, 'N', 10);
   }
 
   @Override

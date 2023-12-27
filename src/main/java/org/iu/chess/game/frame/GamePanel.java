@@ -1,8 +1,8 @@
-package org.iu.chess.game;
+package org.iu.chess.game.frame;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import org.iu.chess.move.LegalMovePreviewListener;
-import org.iu.chess.move.MoveExecutionListener;
+import org.iu.chess.board.Board;
 import org.iu.chess.piece.Piece;
 
 import javax.swing.*;
@@ -10,14 +10,13 @@ import java.awt.*;
 import java.util.Map;
 
 public class GamePanel extends JPanel {
-  public Map<Piece, ImageIcon> imageCache = Maps.newHashMap();
+  // Public to share graphics between the GameFrame and the GamePanel
+  public final Map<Piece, ImageIcon> imageCache = Maps.newHashMap();
 
-  private final ChessGame game;
+  private final Board position;
 
-  public GamePanel(ChessGame game) {
-    this.game = game;
-    addMouseListener(LegalMovePreviewListener.of(this, game));
-    addMouseListener(MoveExecutionListener.of(this, game));
+  private GamePanel(Board position) {
+    this.position = position;
   }
 
   @Override
@@ -25,7 +24,7 @@ public class GamePanel extends JPanel {
     super.paintComponent(g);
     int squareSize = Math.min(getWidth() / 8, getHeight() / 8);
 
-    game.position().squares().forEach(square -> {
+    position.squares().forEach(square -> {
       Color squareColor = (square.rank() + square.file()) % 2 == 0 ? Color.LIGHT_GRAY : Color.WHITE;
       g.setColor(squareColor);
 
@@ -35,7 +34,7 @@ public class GamePanel extends JPanel {
 
       g.fillRect(x, y, squareSize, squareSize);
 
-      game.position().pieceAt(square).ifPresent(piece -> {
+      position.pieceAt(square).ifPresent(piece -> {
         if (imageCache.containsKey(piece)) {
           imageCache.get(piece).paintIcon(this, g, x, y);
           return;
@@ -63,8 +62,13 @@ public class GamePanel extends JPanel {
   }
 
 
-  private static String createImagePath(String pieceName, String color) {
+  private String createImagePath(String pieceName, String color) {
     return "src/main/resources/pieces/" + color + pieceName + ".png";
+  }
+
+  public static GamePanel of(Board position) {
+    Preconditions.checkNotNull(position);
+    return new GamePanel(position);
   }
 }
 

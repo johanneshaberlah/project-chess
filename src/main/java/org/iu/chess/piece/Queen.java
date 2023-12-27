@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class Queen extends Piece {
 
   private Queen(PieceColor color) {
-    super("Queen", color, 'Q');
+    super("Queen", color, 'Q', 50);
   }
 
   @Override

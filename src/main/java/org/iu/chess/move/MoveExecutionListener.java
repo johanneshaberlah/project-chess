@@ -1,7 +1,7 @@
 package org.iu.chess.move;
 
 import org.iu.chess.Square;
-import org.iu.chess.game.ChessGame;
+import org.iu.chess.game.Game;
 import org.iu.chess.game.InvalidGameActionException;
 import org.iu.chess.game.player.PlayerMove;
 
@@ -10,12 +10,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class MoveExecutionListener extends MouseAdapter {
-  private final ChessGame game;
+  private final Game game;
   private final JPanel parent;
 
   private SquareTimeTuple lastClick;
 
-  private MoveExecutionListener(JPanel parent, ChessGame game) {
+  private MoveExecutionListener(JPanel parent, Game game) {
     this.parent = parent;
     this.game = game;
   }
@@ -63,7 +63,7 @@ public class MoveExecutionListener extends MouseAdapter {
     });
   }
 
-  public static MoveExecutionListener of(JPanel parent, ChessGame game) {
+  public static MoveExecutionListener of(JPanel parent, Game game) {
     return new MoveExecutionListener(parent, game);
   }
 }

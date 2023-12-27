@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class Bishop extends Piece {
 
   private Bishop(PieceColor color) {
-    super("Bishop", color, 'B');
+    super("Bishop", color, 'B', 10);
   }
 
   @Override

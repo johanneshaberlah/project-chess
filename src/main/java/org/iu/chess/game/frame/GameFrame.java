@@ -1,18 +1,28 @@
-package org.iu.chess.game;
+package org.iu.chess.game.frame;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import org.iu.chess.board.Board;
+import org.iu.chess.game.Game;
+import org.iu.chess.game.GameFactory;
+import org.iu.chess.game.GameTimingStrategy;
+import org.iu.chess.game.player.PlayerClock;
+import org.iu.chess.move.LegalMovePreviewListener;
+import org.iu.chess.move.MoveExecutionListener;
 import org.iu.chess.piece.Piece;
 import org.iu.chess.piece.PieceColor;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Map;
+import java.util.Optional;
 
 public class GameFrame extends JFrame {
   private Map<Piece, ImageIcon> imageCache = Maps.newHashMap();
 
-  private final ChessGame chessGame;
+  private GamePanel gamePanel;
+  private Optional<GameTimingStrategy> timingStrategy;
+
   private final JLabel timerLabel;
   private final JLabel aboveBoardTimerLabel;
   private final JLabel playerNameLabel; // Hinzugefügtes JLabel für den Spielername
@@ -21,12 +31,13 @@ public class GameFrame extends JFrame {
   private final JPanel iconsPanel;
   private final JPanel iconsPanel2;
 
-  private GameFrame(ChessGame game) {
-    this.chessGame = game;
-
+  private GameFrame(
+    Board position,
+    Optional<GameTimingStrategy> timingStrategy
+  ) {
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setTitle("Schach");
-
+    this.timingStrategy = timingStrategy;
     // Embed the BoardPanel in a JPanel with an EmptyBorder
     JPanel boardPanelContainer = new JPanel(new BorderLayout());
     boardPanelContainer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -53,10 +64,11 @@ public class GameFrame extends JFrame {
     secondPlayerNameLabel.setHorizontalAlignment(JLabel.CENTER);
 
     // Initialize the BoardPanel and add it to the container
-    GamePanel chessBoardPanel = new GamePanel(chessGame);
-    boardPanelContainer.add(chessBoardPanel, BorderLayout.CENTER);
+    this.gamePanel = GamePanel.of(position);
+
+    boardPanelContainer.add(this.gamePanel, BorderLayout.CENTER);
     add(boardPanelContainer, BorderLayout.CENTER);
-    this.imageCache = chessBoardPanel.imageCache;
+    this.imageCache = this.gamePanel.imageCache;
     addTimers();
     setMinimumSize(new Dimension(1050, 840)); // Adjusted width to accommodate the timers
     setResizable(false);
@@ -65,8 +77,12 @@ public class GameFrame extends JFrame {
     setLocationRelativeTo(null); // Center the frame
   }
 
+  public GamePanel panel() {
+    return this.gamePanel;
+  }
+
   private void addTimers() {
-    chessGame.timingStrategy().ifPresent(timing -> {
+    timingStrategy.ifPresent(timing -> {
       // Create a panel for the timers on the right
       JPanel timersPanel = new JPanel(new GridBagLayout());
       GridBagConstraints gbc = new GridBagConstraints();
@@ -109,11 +125,6 @@ public class GameFrame extends JFrame {
 
       // Add the container to the frame
       add(timersPanel, BorderLayout.EAST);
-
-      // Use javax.swing.Timer to update the timer label for Player 1 every second
-      Timer timer = new Timer(1000, tick -> updateTimersText());
-      chessGame.players().asSet().forEach(player -> player.lostPieces().addChangeListener(this::showLostPiece));
-      timer.start();
     });
   }
 
@@ -134,7 +145,6 @@ public class GameFrame extends JFrame {
     // Load and resize the clock icon
     ImageIcon clockIcon = new ImageIcon("src/main/resources/icons/clock.png"); // Replace with the correct path
     label.setIcon(clockIcon);
-
     return label;
   }
 
@@ -145,7 +155,7 @@ public class GameFrame extends JFrame {
     return  iconsPanel;
   }
 
-  private void showLostPiece(Piece piece) {
+  public void showLostPiece(Piece piece) {
     JLabel label = new JLabel(new ImageIcon(imageCache.get(piece).getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH)));
 
     if (piece.color().equals(PieceColor.BLACK)) {
@@ -155,14 +165,14 @@ public class GameFrame extends JFrame {
     }
   }
 
-  private void updateTimersText() {
-    chessGame.playerWithColor(PieceColor.WHITE).clock().ifPresent(clock -> {
+  public void updateTimersText(Optional<PlayerClock> whitePlayer, Optional<PlayerClock> blackPlayer) {
+    whitePlayer.ifPresent(clock -> {
       long minutes = clock.currentTimeRemaining() / 60;
       long seconds = clock.currentTimeRemaining() % 60;
       String timeString = String.format("%02d:%02d", minutes, seconds);
       aboveBoardTimerLabel.setText(timeString);
     });
-    chessGame.playerWithColor(PieceColor.BLACK).clock().ifPresent(clock -> {
+    blackPlayer.ifPresent(clock -> {
       long minutes = clock.currentTimeRemaining() / 60;
       long seconds = clock.currentTimeRemaining() % 60;
       String timeString = String.format("%02d:%02d", minutes, seconds);
@@ -170,17 +180,11 @@ public class GameFrame extends JFrame {
     });
   }
 
-  public static GameFrame of(ChessGame game) {
-    Preconditions.checkNotNull(game);
-    return new GameFrame(game);
-  }
-
-  public static void main(String[] args) {
-    SwingUtilities.invokeLater(() -> {
-      ChessGame game = ChessGame.startingPosition();
-      GameFrame chessBoardFrame = GameFrame.of(game);
-      chessBoardFrame.setVisible(true);
-      game.start();
-    });
+  public static GameFrame of(
+    Board position,
+    Optional<GameTimingStrategy> timingStrategy
+  ) {
+    Preconditions.checkNotNull(position);
+    return new GameFrame(position, timingStrategy);
   }
 }

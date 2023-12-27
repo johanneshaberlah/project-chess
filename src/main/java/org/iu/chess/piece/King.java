@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public class King extends Piece {
 
   private King(PieceColor color) {
-    super("King", color, 'K');
+    super("King", color, 'K', 1000);
   }
 
   @Override

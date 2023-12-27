@@ -1,27 +1,24 @@
 package org.iu.chess.game;
 
 import org.iu.chess.board.Board;
-import org.iu.chess.board.BoardFactory;
 import org.iu.chess.game.artificial.ArtificialPlayer;
 import org.iu.chess.game.player.Player;
 import org.iu.chess.game.player.PlayerClock;
 import org.iu.chess.game.player.PlayerMove;
 import org.iu.chess.game.player.PlayerTuple;
 import org.iu.chess.move.IllegalMoveException;
-import org.iu.chess.move.Move;
 import org.iu.chess.piece.PieceColor;
 
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Stack;
 
-public class ChessGame {
+public class Game {
   private final Optional<GameTimingStrategy> timingStrategy; // Empty if the game mode is "correspondence" (without timing)
   private final PlayerTuple players;
   private final Stack<PlayerMove> moves;
   private final Board position;
 
-  public ChessGame(
+  public Game(
     Optional<GameTimingStrategy> timingStrategy,
     PlayerTuple players,
     Stack<PlayerMove> moves,
@@ -87,59 +84,4 @@ public class ChessGame {
     return timingStrategy;
   }
 
-  public static ChessGame withSelectedTime(int minutes, int increment) {
-    return new ChessGame(
-      Optional.of(new GameTimingStrategy(minutes, increment)),
-      new PlayerTuple(
-        new Player(
-          "Weiß",
-          new HashSet<>(),
-          Optional.of(PlayerClock.fromStrategy(new GameTimingStrategy(minutes, increment)))
-        ),
-        new Player(
-          "Schwarz",
-          new HashSet<>(),
-          Optional.of(PlayerClock.fromStrategy(new GameTimingStrategy(minutes, increment)))
-        )
-      ),
-      new Stack<>(),
-      BoardFactory.create("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
-    );
-  }
-
-  public static ChessGame startingPosition() {
-    return new ChessGame(
-      Optional.of(new GameTimingStrategy(3, 0)),
-      new PlayerTuple(
-        new Player(
-          "Weiß",
-          new HashSet<>(),
-          Optional.of(PlayerClock.fromStrategy(new GameTimingStrategy(3, 0)))
-        ),
-        new Player(
-          "Schwarz",
-          new HashSet<>(),
-          Optional.of(PlayerClock.fromStrategy(new GameTimingStrategy(3, 0)))
-        )
-      ),
-      new Stack<>(),
-      BoardFactory.create("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
-    );
-  }
-
-  public static ChessGame startingPositionWithComputer() {
-    return new ChessGame(
-      Optional.empty(),
-      new PlayerTuple(
-        new Player(
-          "Weiß",
-          new HashSet<>(),
-          Optional.empty()
-        ),
-        ArtificialPlayer.create(Optional.empty())
-      ),
-      new Stack<>(),
-      BoardFactory.create("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
-    );
-  }
 }

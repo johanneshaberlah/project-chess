@@ -1,13 +1,11 @@
-package org.iu.chess.game;
+package org.iu.chess.game.termination;
 
 import com.google.common.base.Preconditions;
-import org.iu.chess.move.MoveTuple;
+import org.iu.chess.game.Game;
 import org.iu.chess.piece.PieceColor;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * Special Game States:
@@ -17,10 +15,10 @@ import java.util.Set;
  * - Checkmate
  */
 public class TerminalGameStateComponent {
-  private ChessGame chessGame;
+  private Game game;
 
-  private TerminalGameStateComponent(ChessGame chessGame) {
-    this.chessGame = chessGame;
+  private TerminalGameStateComponent(Game game) {
+    this.game = game;
   }
 
   public Optional<TerminalGameStateAndColor> evaluateTerminalGameState() {
@@ -42,41 +40,31 @@ public class TerminalGameStateComponent {
   }
 
   private boolean isCheckMate(PieceColor color) {
-    return chessGame.position().isCheckMate(chessGame.position(), color);
+    return game.position().isCheckMate(game.position(), color);
   }
 
   private boolean isStaleMate(PieceColor color) {
-    return chessGame.position().isStaleMate(chessGame.position(), color);
+    return game.position().isStaleMate(game.position(), color);
   }
 
   private boolean isInsufficientMaterial() {
     // Insufficient material if there is no piece except both kings
     return Arrays.stream(PieceColor.values())
-      .map(chessGame.position()::piecesWithColor)
+      .map(game.position()::piecesWithColor)
       .anyMatch(squares -> squares.stream()
-        .map(chessGame.position()::pieceAt)
+        .map(game.position()::pieceAt)
         .filter(Optional::isPresent)
         .map(Optional::get)
         .anyMatch(piece -> piece.fenName() != 'K'));
   }
 
   private boolean isThreefoldRepetition() {
-    if (chessGame.moves().size() < 3 * 2) {
-      return false;
-    }
-    // Check if the last three entry-sets of the stack are identical
-    Set<MoveTuple> lastThreeMoves = new HashSet<MoveTuple>();
-    for (int index = 0; index < 3; index++) {
-      var left = chessGame.moves().pop();
-      var right = chessGame.moves().pop();
-      lastThreeMoves.add(new MoveTuple(left.move(), right.move()));
-    }
-    // Since Sets are unique, we just need to count the entries of the set
-    return lastThreeMoves.size() == 1;
+    // TODO
+    return false;
   }
 
-  public static TerminalGameStateComponent of(ChessGame chessGame) {
-    Preconditions.checkNotNull(chessGame);
-    return new TerminalGameStateComponent(chessGame);
+  public static TerminalGameStateComponent of(Game game) {
+    Preconditions.checkNotNull(game);
+    return new TerminalGameStateComponent(game);
   }
 }

@@ -9,6 +9,10 @@ import java.util.Optional;
 
 public class BoardFactory {
 
+  public static Board startingPosition() {
+    return create("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+  }
+
   public static Board create(String fen) {
     Map<Square, Optional<Piece>> squares = new HashMap<>();
     String[] fenParts = fen.split(" ");

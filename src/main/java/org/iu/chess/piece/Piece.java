@@ -12,13 +12,15 @@ public abstract class Piece {
   private final String name;
   private final PieceColor color;
   private final char fenName;
+  private final int value;
 
   private boolean hasMoved;
 
-  public Piece(String name, PieceColor color, char fenName) {
+  public Piece(String name, PieceColor color, char fenName, int value) {
     this.name = name;
     this.color = color;
     this.fenName = fenName;
+    this.value = value;
   }
 
   public boolean hasMoved() {
@@ -27,6 +29,10 @@ public abstract class Piece {
 
   public void declareMoved() {
     hasMoved = true;
+  }
+
+  public int value() {
+    return value;
   }
 
   public Collection<Move> legalMoves(Board board, Square square) {

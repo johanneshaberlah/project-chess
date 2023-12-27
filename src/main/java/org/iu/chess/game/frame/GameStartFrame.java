@@ -1,8 +1,7 @@
 package org.iu.chess.game.frame;
 
-import org.iu.chess.game.ChessGame;
-import org.iu.chess.game.GameFrame;
-import org.iu.chess.game.GameMode;
+import com.google.common.base.Preconditions;
+import org.iu.chess.game.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,7 +24,7 @@ public class GameStartFrame extends JFrame {
 
   private String selectedMode = "";
 
-  public GameStartFrame() {
+  private GameStartFrame(GameStartListener gameStartListener) {
     StyledGameButton sb = new StyledGameButton();
     setTitle("Chess Game - Main Menu");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -100,11 +99,7 @@ public class GameStartFrame extends JFrame {
     startGameButton.addActionListener(e -> {
       int selectedTime = getSelectedTime();
       String selectedDifficulty = getSelectedDifficulty();
-
-      ChessGame chessGame = ChessGame.withSelectedTime(selectedTime, 3);
-      GameFrame frame = GameFrame.of(chessGame);
-      frame.setVisible(true);
-      chessGame.start();
+      gameStartListener.onGameStart(new GameStartContext(selectedTime, selectedDifficulty, getSelectedMode()));
     });
 
     ActionListener aiButtonListener = e -> handleAIDifficultyButtonClick(e.getActionCommand(), "AI " + e.getActionCommand() + " gewählt", (JButton) e.getSource());
@@ -202,5 +197,10 @@ public class GameStartFrame extends JFrame {
     if (play1v1Button.isSelected()) return "1v1";
     else if (playAgainstComputerButton.isSelected()) return "AI";
     else return "null";
+  }
+
+  public static GameStartFrame of(GameStartListener gameStartListener) {
+    Preconditions.checkNotNull(gameStartListener);
+    return new GameStartFrame(gameStartListener);
   }
 }

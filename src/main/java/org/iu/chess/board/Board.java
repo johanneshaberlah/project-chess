@@ -3,7 +3,7 @@ package org.iu.chess.board;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.iu.chess.Square;
-import org.iu.chess.game.ChessGameEndListener;
+import org.iu.chess.game.GameEndListener;
 import org.iu.chess.move.IllegalMoveException;
 import org.iu.chess.move.Move;
 import org.iu.chess.piece.Pawn;
@@ -13,7 +13,7 @@ import org.iu.chess.piece.PieceColor;
 import java.util.*;
 
 public class Board {
-  private final Collection<ChessGameEndListener> gameEndListeners = Lists.newArrayList();
+  private final Collection<GameEndListener> gameEndListeners = Lists.newArrayList();
 
   private final Map<Square, Optional<Piece>> squares;
 
@@ -21,7 +21,7 @@ public class Board {
     this.squares = squares;
   }
 
-  public void registerGameEndListener(ChessGameEndListener listener) {
+  public void registerGameEndListener(GameEndListener listener) {
     gameEndListeners.add(listener);
   }
 
@@ -130,8 +130,13 @@ public class Board {
       .collect(java.util.stream.Collectors.toSet());
   }
 
+  @Override
+  public Board clone() {
+    return Board.of(squares);
+  }
+
   public static Board of(Map<Square, Optional<Piece>> position) {
-    return new Board(position);
+    return new Board(new HashMap<>(position));
   }
 
   public static Board examplePosition() {

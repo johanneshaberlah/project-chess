@@ -42,7 +42,7 @@ public class GamePausedFrame extends JFrame {
       System.out.println("save game");
     });
     continueGameButton.addActionListener(e -> {
-      System.out.println("continue game");//add 3s delay before game start?
+      System.out.println("continue game");
     });
     mainMenuButton.addActionListener(e -> {
       System.out.println("new game");
@@ -52,13 +52,5 @@ public class GamePausedFrame extends JFrame {
     });
 
     add(gamePausedPanel);
-
-  }
-
-  public static void main(String[] args) {
-    SwingUtilities.invokeLater(() -> {
-      GamePausedFrame gamePausedFrame = new GamePausedFrame();
-      gamePausedFrame.setVisible(true);
-    });
   }
 }

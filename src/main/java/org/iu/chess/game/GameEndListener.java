@@ -5,6 +5,6 @@ import org.iu.chess.piece.PieceColor;
 import java.util.Optional;
 
 @FunctionalInterface
-public interface ChessGameEndListener {
+public interface GameEndListener {
   void onGameEnd(Optional<PieceColor> winner);
 }

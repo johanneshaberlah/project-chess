@@ -2,8 +2,6 @@ package org.iu.chess.common;
 
 import com.google.common.collect.Sets;
 
-import java.lang.constant.Constable;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Spliterator;

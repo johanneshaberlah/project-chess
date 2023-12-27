@@ -1,4 +1,4 @@
-package org.iu.chess.game;
+package org.iu.chess.game.termination;
 
 public enum TerminalGameState {
   CHECKMATE,
