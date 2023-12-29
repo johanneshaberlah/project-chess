@@ -31,10 +31,7 @@ public class LegalMovePreviewListener extends MouseAdapter {
     graphics.setColor(new Color(107, 110, 70));
     SwingUtilities.invokeLater(() -> {
       position.pieceAt(square).ifPresent(piece -> {
-        while (!previewPoints.empty()) {
-          Point point = previewPoints.pop();
-          parent.repaint(new Rectangle(point.x, point.y, squareSize, squareSize));
-        }
+        Stack<Point> previewClone = (Stack<Point>) previewPoints.clone();
         previewPoints.clear();
         piece.reachableMoves().forEach(move -> {
           // Inverting the y-axis for the drawing
@@ -45,8 +42,13 @@ public class LegalMovePreviewListener extends MouseAdapter {
             int y = (7 - (rank + move.move().rankDifference())) * squareSize; // Flipping the y-axis
             graphics.fillOval(x + squareSize / 2 - squareSize / 8, y + squareSize / 2 - squareSize / 8, squareSize / 4, squareSize / 4);
             previewPoints.push(new Point(x, y));
+            previewClone.remove(new Point(x, y));
           }
         });
+        while (!previewClone.empty()) {
+          Point point = previewClone.pop();
+          parent.repaint(new Rectangle(point.x, point.y, squareSize, squareSize));
+        }
       });
     });
 

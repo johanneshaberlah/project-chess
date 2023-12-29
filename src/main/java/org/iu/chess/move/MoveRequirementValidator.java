@@ -1,6 +1,7 @@
 package org.iu.chess.move;
 
 import org.iu.chess.board.Board;
+import org.iu.chess.game.player.PlayerMove;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -24,7 +25,7 @@ public class MoveRequirementValidator {
 
   private static boolean isRankEmpty(Board board, Move move) {
     return IntStream.range(move.minimalRank() + 1, move.maximalRank())
-      .mapToObj(index ->  board.pieceAt(move.from().withRank(index)))
+      .mapToObj(index -> board.pieceAt(move.from().withRank(index)))
       .filter(Objects::nonNull)
       .noneMatch(Optional::isPresent);
   }
