@@ -3,7 +3,6 @@ package org.iu.chess.board;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.iu.chess.Square;
-import org.iu.chess.game.GameEndListener;
 import org.iu.chess.move.IllegalMoveException;
 import org.iu.chess.move.Move;
 import org.iu.chess.piece.Pawn;
@@ -13,16 +12,10 @@ import org.iu.chess.piece.PieceColor;
 import java.util.*;
 
 public class Board {
-  private final Collection<GameEndListener> gameEndListeners = Lists.newArrayList();
-
   private final Map<Square, Optional<Piece>> squares;
 
   private Board(Map<Square, Optional<Piece>> squares) {
     this.squares = squares;
-  }
-
-  public void registerGameEndListener(GameEndListener listener) {
-    gameEndListeners.add(listener);
   }
 
   public Optional<Piece> pieceAt(Square square) {
@@ -89,11 +82,11 @@ public class Board {
   }
 
   public boolean isCheckMate(Board board, PieceColor pieceColor) {
-    return isCheck(board, pieceColor) && isMate(board, pieceColor);
+    return isCheck(board, pieceColor.opposite()) && isMate(board, pieceColor.opposite());
   }
 
   public boolean isStaleMate(Board board, PieceColor pieceColor) {
-    return !isCheck(board, pieceColor) && isMate(board, pieceColor);
+    return !isCheck(board, pieceColor.opposite()) && isMate(board, pieceColor.opposite());
   }
 
   public boolean isMate(Board board, PieceColor pieceColor) {

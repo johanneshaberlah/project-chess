@@ -1,8 +1,19 @@
 package org.iu.chess.game.termination;
 
 public enum TerminalGameState {
-  CHECKMATE,
-  DRAW_THREEFOLD,
-  DRAW_STALEMATE,
-  DRAW_INSUFFICIENT_MATERIAL
+  CHECKMATE("Schachmatt"),
+  DRAW_THREEFOLD("Zugwiederholung"),
+  DRAW_STALEMATE("Patt"),
+  DRAW_INSUFFICIENT_MATERIAL("Patt"),
+  OUT_OF_TIME("Zeit abgelaufen");
+
+  private final String displayName;
+
+  TerminalGameState(String name) {
+    this.displayName = name;
+  }
+
+  public String displayName() {
+    return displayName;
+  }
 }

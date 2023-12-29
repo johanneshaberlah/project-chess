@@ -22,13 +22,17 @@ public class TerminalGameStateComponent {
   }
 
   public Optional<TerminalGameStateAndColor> evaluateTerminalGameState() {
+    Optional<PieceColor> timeOverColor = Arrays.stream(PieceColor.values()).filter(this::isTimeOver).findFirst();
+    if (timeOverColor.isPresent()) {
+      return Optional.of(new TerminalGameStateAndColor(TerminalGameState.OUT_OF_TIME, timeOverColor));
+    }
     Optional<PieceColor> checkMateColor = Arrays.stream(PieceColor.values()).filter(this::isCheckMate).findFirst();
     if (checkMateColor.isPresent()) {
       return Optional.of(new TerminalGameStateAndColor(TerminalGameState.CHECKMATE, checkMateColor));
     }
     Optional<PieceColor> staleMateColor = Arrays.stream(PieceColor.values()).filter(this::isStaleMate).findFirst();
     if (staleMateColor.isPresent()) {
-      return Optional.of(new TerminalGameStateAndColor(TerminalGameState.DRAW_STALEMATE, checkMateColor));
+      return Optional.of(new TerminalGameStateAndColor(TerminalGameState.DRAW_STALEMATE, staleMateColor));
     }
     if (isInsufficientMaterial()) {
       return Optional.of(new TerminalGameStateAndColor(TerminalGameState.DRAW_INSUFFICIENT_MATERIAL, Optional.empty()));
@@ -37,6 +41,10 @@ public class TerminalGameStateComponent {
       return Optional.of(new TerminalGameStateAndColor(TerminalGameState.DRAW_THREEFOLD, Optional.empty()));
     }
     return Optional.empty();
+  }
+
+  private boolean isTimeOver(PieceColor color) {
+    return game.playerWithColor(color).clock().filter(clock -> clock.currentTimeRemaining() <= 0).isPresent();
   }
 
   private boolean isCheckMate(PieceColor color) {
@@ -51,7 +59,7 @@ public class TerminalGameStateComponent {
     // Insufficient material if there is no piece except both kings
     return Arrays.stream(PieceColor.values())
       .map(game.position()::piecesWithColor)
-      .anyMatch(squares -> squares.stream()
+      .noneMatch(squares -> squares.stream()
         .map(game.position()::pieceAt)
         .filter(Optional::isPresent)
         .map(Optional::get)

@@ -1,18 +1,24 @@
 package org.iu.chess.game;
 
+import com.google.common.collect.Lists;
 import org.iu.chess.board.Board;
 import org.iu.chess.game.artificial.ArtificialPlayer;
 import org.iu.chess.game.player.Player;
 import org.iu.chess.game.player.PlayerClock;
 import org.iu.chess.game.player.PlayerMove;
 import org.iu.chess.game.player.PlayerTuple;
+import org.iu.chess.game.termination.TerminalGameStateComponent;
 import org.iu.chess.move.IllegalMoveException;
 import org.iu.chess.piece.PieceColor;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Stack;
 
 public class Game {
+  private final TerminalGameStateComponent terminalStates = TerminalGameStateComponent.of(this);
+  private final Collection<GameEndListener> gameEndingHandlers = Lists.newArrayList();
+
   private final Optional<GameTimingStrategy> timingStrategy; // Empty if the game mode is "correspondence" (without timing)
   private final PlayerTuple players;
   private final Stack<PlayerMove> moves;
@@ -30,6 +36,10 @@ public class Game {
     this.position = position;
   }
 
+  public void registerGameEndHandler(GameEndListener gameEnding) {
+    gameEndingHandlers.add(gameEnding);
+  }
+
   public void start() {
     playerWithColor(PieceColor.WHITE).clock().ifPresent(PlayerClock::beginMove);
   }
@@ -43,6 +53,7 @@ public class Game {
     var targetPiece = position.pieceAt(move.move().to());
     position.performMove(move.move());
     moves.push(move);
+    terminalStates.evaluateTerminalGameState().ifPresent(state -> gameEndingHandlers.forEach(handler -> handler.onGameEnd(state)));
     targetPiece.ifPresent(piece -> playerWithColor(piece.color()).loose(piece));
 
     // Prepare move for next player (Start Clock and if it is an artificial player, make the move)

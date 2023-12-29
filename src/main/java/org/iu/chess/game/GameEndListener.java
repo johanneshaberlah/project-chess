@@ -1,10 +1,8 @@
 package org.iu.chess.game;
 
-import org.iu.chess.piece.PieceColor;
-
-import java.util.Optional;
+import org.iu.chess.game.termination.TerminalGameStateAndColor;
 
 @FunctionalInterface
 public interface GameEndListener {
-  void onGameEnd(Optional<PieceColor> winner);
+  void onGameEnd(TerminalGameStateAndColor gameState);
 }
