@@ -31,6 +31,8 @@ public class GameFrame extends JFrame {
   private final JPanel iconsPanel;
   private final JPanel iconsPanel2;
 
+  private JButton pauseButton;
+
   private GameFrame(
     Board position,
     Optional<GameTimingStrategy> timingStrategy
@@ -87,38 +89,55 @@ public class GameFrame extends JFrame {
       JPanel timersPanel = new JPanel(new GridBagLayout());
       GridBagConstraints gbc = new GridBagConstraints();
 
+      pauseButton = new JButton("");
+      pauseButton.addActionListener(e -> handlePauseButton());
+      pauseButton.setFocusPainted(false);
+      pauseButton.setBorderPainted(false);
+      pauseButton.setContentAreaFilled(false);
+      pauseButton.setOpaque(true);
+      ImageIcon pauseIcon = new ImageIcon("src/main/resources/icons/pause.png");
+      Image scaledImage = pauseIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+      ImageIcon scaledPauseIcon = new ImageIcon(scaledImage);
+      pauseButton.setIcon(scaledPauseIcon);
+
       gbc.gridx = 0;
-      gbc.gridy = 0;
+      gbc.gridy = 0; // Sie können den GridY-Wert entsprechend anpassen
+      gbc.anchor = GridBagConstraints.NORTHEAST;
+      gbc.insets = new Insets(10, 0, 50, 20);
+      timersPanel.add(pauseButton, gbc);
+
+      gbc.gridx = 0;
+      gbc.gridy = 1;
       gbc.anchor = GridBagConstraints.PAGE_START;
       gbc.insets = new Insets(0, 0, 50, 20);
       timersPanel.add(iconsPanel, gbc);
 
       gbc.gridx = 0;
-      gbc.gridy = 1;
+      gbc.gridy = 2;
       gbc.anchor = GridBagConstraints.CENTER;
       gbc.insets = new Insets(0, 0, 10, 20); // Fügt zusätzlichen vertikalen Abstand unterhalb des Player 1 Timers hinzu
       timersPanel.add(timerLabel, gbc);
 
       gbc.gridx = 0;
-      gbc.gridy = 2;
+      gbc.gridy = 3;
       gbc.anchor = GridBagConstraints.CENTER;
       gbc.insets = new Insets(0, 0, 60, 20);
       timersPanel.add(playerNameLabel, gbc);
 
       gbc.gridx = 0;
-      gbc.gridy = 3;
+      gbc.gridy = 4;
       gbc.anchor = GridBagConstraints.CENTER;
       gbc.insets = new Insets(60, 0, 0, 20);
       timersPanel.add(secondPlayerNameLabel, gbc);
 
       gbc.gridx = 0;
-      gbc.gridy = 4; // Sie können den GridY-Wert entsprechend anpassen
+      gbc.gridy = 5; // Sie können den GridY-Wert entsprechend anpassen
       gbc.anchor = GridBagConstraints.CENTER;
       gbc.insets = new Insets(10, 0, 0, 20);
       timersPanel.add(aboveBoardTimerLabel, gbc);
 
       gbc.gridx = 0;
-      gbc.gridy = 5; // Sie können den GridY-Wert entsprechend anpassen
+      gbc.gridy = 6; // Sie können den GridY-Wert entsprechend anpassen
       gbc.anchor = GridBagConstraints.PAGE_END;
       gbc.insets = new Insets(50, 0, 0, 20);
       timersPanel.add(iconsPanel2, gbc);
@@ -127,6 +146,12 @@ public class GameFrame extends JFrame {
       add(timersPanel, BorderLayout.EAST);
     });
   }
+
+  private void handlePauseButton() {
+    // Hier Logik dann rein
+    System.out.println("PauseButton pressed");
+  }
+
 
   private JLabel createStyledTimerLabel() {
     JLabel label = new JLabel();
