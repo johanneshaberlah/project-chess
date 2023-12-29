@@ -42,6 +42,7 @@ public class GameFrame extends JFrame {
     this.timingStrategy = timingStrategy;
     // Embed the BoardPanel in a JPanel with an EmptyBorder
     JPanel boardPanelContainer = new JPanel(new BorderLayout());
+    boardPanelContainer.setBackground(Color.GRAY);
     boardPanelContainer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
     // Initialize the timer label for Player 1 (bottom right)
@@ -72,7 +73,7 @@ public class GameFrame extends JFrame {
     add(boardPanelContainer, BorderLayout.CENTER);
     this.imageCache = this.gamePanel.imageCache;
     addTimers();
-    setMinimumSize(new Dimension(1050, 840)); // Adjusted width to accommodate the timers
+    setMinimumSize(new Dimension(910, 763)); // Adjusted width to accommodate the timers
     setResizable(false);
 
     pack();
@@ -103,7 +104,7 @@ public class GameFrame extends JFrame {
       gbc.gridx = 0;
       gbc.gridy = 0; // Sie können den GridY-Wert entsprechend anpassen
       gbc.anchor = GridBagConstraints.NORTHEAST;
-      gbc.insets = new Insets(10, 0, 50, 20);
+      gbc.insets = new Insets(0, 0, 10, 20);
       timersPanel.add(pauseButton, gbc);
 
       gbc.gridx = 0;
