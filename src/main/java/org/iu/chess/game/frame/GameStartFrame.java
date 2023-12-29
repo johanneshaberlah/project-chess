@@ -99,6 +99,7 @@ public class GameStartFrame extends JFrame {
     startGameButton.addActionListener(e -> {
       int selectedTime = getSelectedTime();
       String selectedDifficulty = getSelectedDifficulty();
+      System.out.println(selectedTime);
       gameStartListener.onGameStart(new GameStartContext(selectedTime, selectedDifficulty, getSelectedMode()));
     });
 

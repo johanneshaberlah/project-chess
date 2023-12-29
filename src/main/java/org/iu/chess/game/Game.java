@@ -65,6 +65,19 @@ public class Game {
     }
   }
 
+  public void pause() {
+    playerWithColor(PieceColor.WHITE).clock().ifPresent(PlayerClock::pause);
+    playerWithColor(PieceColor.BLACK).clock().ifPresent(PlayerClock::pause);
+  }
+
+  public void restartClock() {
+    playerWithColor(nextMove()).clock().ifPresent(PlayerClock::beginMove);
+  }
+
+  public void checkForTerminalGameState() {
+    terminalStates.evaluateTerminalGameState().ifPresent(state -> gameEndingHandlers.forEach(handler -> handler.onGameEnd(state)));
+  }
+
   public PieceColor nextMove() {
     if (moves.isEmpty()) {
       return PieceColor.WHITE;

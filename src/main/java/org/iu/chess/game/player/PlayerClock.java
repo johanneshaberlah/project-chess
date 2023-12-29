@@ -23,6 +23,13 @@ public class PlayerClock {
     return timeRemaining - (moveStopwatch == null ? 0 : moveStopwatch.elapsed(TimeUnit.SECONDS));
   }
 
+  public void pause() {
+    if (moveStopwatch != null) {
+      timeRemaining -= moveStopwatch.elapsed(TimeUnit.SECONDS);
+      moveStopwatch = null;
+    }
+  }
+
   public void finishMove() {
     if (moveStopwatch != null) {
       timeRemaining -= moveStopwatch.elapsed(TimeUnit.SECONDS);

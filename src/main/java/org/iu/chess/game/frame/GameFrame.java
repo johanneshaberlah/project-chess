@@ -21,21 +21,20 @@ public class GameFrame extends JFrame {
   private Map<Piece, ImageIcon> imageCache = Maps.newHashMap();
 
   private GamePanel gamePanel;
-  private Optional<GameTimingStrategy> timingStrategy;
+  private final Optional<GameTimingStrategy> timingStrategy;
 
-  private final JLabel timerLabel;
-  private final JLabel aboveBoardTimerLabel;
+  private JLabel timerLabel;
+  private JLabel aboveBoardTimerLabel;
   private final JLabel playerNameLabel; // Hinzugefügtes JLabel für den Spielername
   private final JLabel secondPlayerNameLabel; // Neues JLabel für den zweiten Spieler
 
   private final JPanel iconsPanel;
   private final JPanel iconsPanel2;
 
-  private JButton pauseButton;
-
   private GameFrame(
     Board position,
-    Optional<GameTimingStrategy> timingStrategy
+    Optional<GameTimingStrategy> timingStrategy,
+    Runnable onPause
   ) {
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setTitle("Schach");
@@ -45,13 +44,16 @@ public class GameFrame extends JFrame {
     boardPanelContainer.setBackground(Color.GRAY);
     boardPanelContainer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-    // Initialize the timer label for Player 1 (bottom right)
-    timerLabel = createStyledTimerLabel();
-    timerLabel.setHorizontalAlignment(JLabel.CENTER);
+    timingStrategy.ifPresent(timing -> {
+      // Initialize the timer label for Player 1 (bottom right)
+      timerLabel = createStyledTimerLabel();
+      timerLabel.setHorizontalAlignment(JLabel.CENTER);
 
-    // Initialize the JLabel for the timer above the board for Player 2 (top right)
-    aboveBoardTimerLabel = createStyledTimerLabel();
-    aboveBoardTimerLabel.setHorizontalAlignment(JLabel.CENTER);
+      // Initialize the JLabel for the timer above the board for Player 2 (top right)
+      aboveBoardTimerLabel = createStyledTimerLabel();
+      aboveBoardTimerLabel.setHorizontalAlignment(JLabel.CENTER);
+    });
+
 
     iconsPanel = createIconsLabel();
     iconsPanel2 = createIconsLabel();
@@ -72,7 +74,7 @@ public class GameFrame extends JFrame {
     boardPanelContainer.add(this.gamePanel, BorderLayout.CENTER);
     add(boardPanelContainer, BorderLayout.CENTER);
     this.imageCache = this.gamePanel.imageCache;
-    addTimers();
+    addTimers(onPause);
     setMinimumSize(new Dimension(910, 763)); // Adjusted width to accommodate the timers
     setResizable(false);
 
@@ -84,35 +86,48 @@ public class GameFrame extends JFrame {
     return this.gamePanel;
   }
 
-  private void addTimers() {
+  private void addTimers(Runnable onPause) {
+
+    // Create a panel for the timers on the right
+    JPanel timersPanel = new JPanel(new GridBagLayout());
+    GridBagConstraints gbc = new GridBagConstraints();
+
+    JButton pauseButton = new JButton("");
+    pauseButton.addActionListener(e -> onPause.run());
+    pauseButton.setFocusPainted(false);
+    pauseButton.setBorderPainted(false);
+    pauseButton.setContentAreaFilled(false);
+    pauseButton.setOpaque(true);
+    ImageIcon pauseIcon = new ImageIcon("src/main/resources/icons/pause.png");
+    Image scaledImage = pauseIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+    ImageIcon scaledPauseIcon = new ImageIcon(scaledImage);
+    pauseButton.setIcon(scaledPauseIcon);
+
+    gbc.gridx = 0;
+    gbc.gridy = 0; // Sie können den GridY-Wert entsprechend anpassen
+    gbc.anchor = GridBagConstraints.NORTHEAST;
+    gbc.insets = new Insets(0, 0, 10, 20);
+    timersPanel.add(pauseButton, gbc);
+
+    gbc.gridx = 0;
+    gbc.gridy = 1;
+    gbc.anchor = GridBagConstraints.PAGE_START;
+    gbc.insets = new Insets(0, 0, 50, 20);
+    timersPanel.add(iconsPanel, gbc);
+
+    gbc.gridx = 0;
+    gbc.gridy = 3;
+    gbc.anchor = GridBagConstraints.CENTER;
+    gbc.insets = new Insets(0, 0, 60, 20);
+    timersPanel.add(playerNameLabel, gbc);
+
+    gbc.gridx = 0;
+    gbc.gridy = 4;
+    gbc.anchor = GridBagConstraints.CENTER;
+    gbc.insets = new Insets(60, 0, 0, 20);
+    timersPanel.add(secondPlayerNameLabel, gbc);
+
     timingStrategy.ifPresent(timing -> {
-      // Create a panel for the timers on the right
-      JPanel timersPanel = new JPanel(new GridBagLayout());
-      GridBagConstraints gbc = new GridBagConstraints();
-
-      pauseButton = new JButton("");
-      pauseButton.addActionListener(e -> handlePauseButton());
-      pauseButton.setFocusPainted(false);
-      pauseButton.setBorderPainted(false);
-      pauseButton.setContentAreaFilled(false);
-      pauseButton.setOpaque(true);
-      ImageIcon pauseIcon = new ImageIcon("src/main/resources/icons/pause.png");
-      Image scaledImage = pauseIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
-      ImageIcon scaledPauseIcon = new ImageIcon(scaledImage);
-      pauseButton.setIcon(scaledPauseIcon);
-
-      gbc.gridx = 0;
-      gbc.gridy = 0; // Sie können den GridY-Wert entsprechend anpassen
-      gbc.anchor = GridBagConstraints.NORTHEAST;
-      gbc.insets = new Insets(0, 0, 10, 20);
-      timersPanel.add(pauseButton, gbc);
-
-      gbc.gridx = 0;
-      gbc.gridy = 1;
-      gbc.anchor = GridBagConstraints.PAGE_START;
-      gbc.insets = new Insets(0, 0, 50, 20);
-      timersPanel.add(iconsPanel, gbc);
-
       gbc.gridx = 0;
       gbc.gridy = 2;
       gbc.anchor = GridBagConstraints.CENTER;
@@ -120,39 +135,21 @@ public class GameFrame extends JFrame {
       timersPanel.add(timerLabel, gbc);
 
       gbc.gridx = 0;
-      gbc.gridy = 3;
-      gbc.anchor = GridBagConstraints.CENTER;
-      gbc.insets = new Insets(0, 0, 60, 20);
-      timersPanel.add(playerNameLabel, gbc);
-
-      gbc.gridx = 0;
-      gbc.gridy = 4;
-      gbc.anchor = GridBagConstraints.CENTER;
-      gbc.insets = new Insets(60, 0, 0, 20);
-      timersPanel.add(secondPlayerNameLabel, gbc);
-
-      gbc.gridx = 0;
       gbc.gridy = 5; // Sie können den GridY-Wert entsprechend anpassen
       gbc.anchor = GridBagConstraints.CENTER;
       gbc.insets = new Insets(10, 0, 0, 20);
       timersPanel.add(aboveBoardTimerLabel, gbc);
-
-      gbc.gridx = 0;
-      gbc.gridy = 6; // Sie können den GridY-Wert entsprechend anpassen
-      gbc.anchor = GridBagConstraints.PAGE_END;
-      gbc.insets = new Insets(50, 0, 0, 20);
-      timersPanel.add(iconsPanel2, gbc);
-
-      // Add the container to the frame
-      add(timersPanel, BorderLayout.EAST);
     });
-  }
 
-  private void handlePauseButton() {
-    // Hier Logik dann rein
-    System.out.println("PauseButton pressed");
-  }
+    gbc.gridx = 0;
+    gbc.gridy = 6; // Sie können den GridY-Wert entsprechend anpassen
+    gbc.anchor = GridBagConstraints.PAGE_END;
+    gbc.insets = new Insets(50, 0, 0, 20);
+    timersPanel.add(iconsPanel2, gbc);
 
+    // Add the container to the frame
+    add(timersPanel, BorderLayout.EAST);
+  }
 
   private JLabel createStyledTimerLabel() {
     JLabel label = new JLabel();
@@ -178,7 +175,7 @@ public class GameFrame extends JFrame {
 
     JPanel iconsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     iconsPanel.setPreferredSize(new Dimension(150, 100));
-    return  iconsPanel;
+    return iconsPanel;
   }
 
   public void showLostPiece(Piece piece) {
@@ -208,9 +205,12 @@ public class GameFrame extends JFrame {
 
   public static GameFrame of(
     Board position,
-    Optional<GameTimingStrategy> timingStrategy
+    Optional<GameTimingStrategy> timingStrategy,
+    Runnable onPause
   ) {
     Preconditions.checkNotNull(position);
-    return new GameFrame(position, timingStrategy);
+    Preconditions.checkNotNull(timingStrategy);
+    Preconditions.checkNotNull(onPause);
+    return new GameFrame(position, timingStrategy, onPause);
   }
 }

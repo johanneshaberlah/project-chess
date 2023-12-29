@@ -1,16 +1,13 @@
 package org.iu.chess.game.frame;
 
+import com.google.common.base.Preconditions;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class GamePausedFrame extends JFrame {
-  //buttons: save, new game, end game
-  private JButton saveGameButton;
-  private JButton continueGameButton;
-  private JButton mainMenuButton;
-  private JButton exitGameButton;
 
-  public GamePausedFrame() {
+  private GamePausedFrame(Runnable onSave, Runnable onContinue, Runnable onNewGame) {
     StyledGameButton sb = new StyledGameButton();
     setTitle("Schach - Spiel pausiert");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -26,11 +23,10 @@ public class GamePausedFrame extends JFrame {
     gamePausedTitle.setFont(new Font("Arial", Font.BOLD, 16));
     gamePausedTitle.setHorizontalAlignment(SwingConstants.CENTER);
 
-
-    saveGameButton = sb.createStyledButton("Spiel speichern");
-    continueGameButton = sb.createStyledButton("Spiel fortsetzen");
-    mainMenuButton = sb.createStyledButton("neues Spiel");
-    exitGameButton = sb.createStyledButton("Spiel beenden");
+    JButton saveGameButton = sb.createStyledButton("Spiel speichern");
+    JButton continueGameButton = sb.createStyledButton("Spiel fortsetzen");
+    JButton mainMenuButton = sb.createStyledButton("Neues Spiel");
+    JButton exitGameButton = sb.createStyledButton("Spiel beenden");
 
     gamePausedPanel.add(gamePausedTitle);
     gamePausedPanel.add(saveGameButton);
@@ -38,19 +34,17 @@ public class GamePausedFrame extends JFrame {
     gamePausedPanel.add(mainMenuButton);
     gamePausedPanel.add(exitGameButton);
 
-    saveGameButton.addActionListener(e -> {
-      System.out.println("save game");
-    });
-    continueGameButton.addActionListener(e -> {
-      System.out.println("continue game");
-    });
-    mainMenuButton.addActionListener(e -> {
-      System.out.println("new game");
-    });
-    exitGameButton.addActionListener(e -> {
-      System.out.println("exit game");
-    });
-
+    saveGameButton.addActionListener(e -> onSave.run());
+    continueGameButton.addActionListener(e -> onContinue.run());
+    mainMenuButton.addActionListener(e -> onNewGame.run());
+    exitGameButton.addActionListener(e -> System.exit(0));
     add(gamePausedPanel);
+  }
+
+  public static GamePausedFrame of(Runnable onSave, Runnable onContinue, Runnable onNewGame) {
+    Preconditions.checkNotNull(onSave);
+    Preconditions.checkNotNull(onContinue);
+    Preconditions.checkNotNull(onNewGame);
+    return new GamePausedFrame(onSave, onContinue, onNewGame);
   }
 }
