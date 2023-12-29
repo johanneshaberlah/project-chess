@@ -96,7 +96,7 @@ public class GameEndFrame extends JFrame {
   }
 
   private String getGameEndMessage() {
-    return gameState.state().displayName() + " - Gewinner: " + gameState.color().map(PieceColor::displayName).orElse("-");
+    return gameState.toString();
   }
 
   public static GameEndFrame of(TerminalGameStateAndColor gameState, Runnable onMainMenu) {

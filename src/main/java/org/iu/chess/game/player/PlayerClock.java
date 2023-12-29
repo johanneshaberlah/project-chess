@@ -24,7 +24,6 @@ public class PlayerClock {
   }
 
   public void finishMove() {
-    System.out.println("finishMove()");
     if (moveStopwatch != null) {
       timeRemaining -= moveStopwatch.elapsed(TimeUnit.SECONDS);
       moveStopwatch = null;

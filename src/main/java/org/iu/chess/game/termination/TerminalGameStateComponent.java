@@ -44,7 +44,7 @@ public class TerminalGameStateComponent {
   }
 
   private boolean isTimeOver(PieceColor color) {
-    return game.playerWithColor(color).clock().filter(clock -> clock.currentTimeRemaining() <= 0).isPresent();
+    return game.playerWithColor(color.opposite()).clock().filter(clock -> clock.currentTimeRemaining() <= 0).isPresent();
   }
 
   private boolean isCheckMate(PieceColor color) {
