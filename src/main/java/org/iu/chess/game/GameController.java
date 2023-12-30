@@ -1,12 +1,15 @@
 package org.iu.chess.game;
 
 import com.google.common.base.Preconditions;
+import org.iu.chess.game.artificial.StockfishPlayer;
 import org.iu.chess.game.frame.GameEndFrame;
 import org.iu.chess.game.frame.GameFrame;
 import org.iu.chess.game.frame.GamePausedFrame;
 import org.iu.chess.game.frame.GameStartFrame;
+import org.iu.chess.game.player.PlayerClock;
 import org.iu.chess.move.LegalMovePreviewListener;
 import org.iu.chess.move.MoveExecutionListener;
+import org.iu.chess.piece.PieceColor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,7 +38,8 @@ public class GameController {
   }
 
   public void startGame(Optional<GameTimingStrategy> timing) {
-    Game game = gameFactory.withTiming(timing);
+    Game game = gameFactory.withTimingAndPlayer(timing, new StockfishPlayer("Stockfish", PieceColor.BLACK, timing.map(PlayerClock::fromStrategy)));
+
 
     // Initialize GameFrame
     ScheduledFuture<?> moveTimer;

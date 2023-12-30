@@ -79,7 +79,7 @@ public class BoardFactory {
         Square square = new Square(file, rank);
         Optional<Piece> pieceOptional = board.pieceAt(square);
 
-        if (pieceOptional.isPresent()) {
+        if (pieceOptional != null && pieceOptional.isPresent()) {
           if (emptyCount > 0) {
             fen.append(emptyCount);
             emptyCount = 0;
@@ -90,20 +90,19 @@ public class BoardFactory {
         } else {
           emptyCount++;
         }
-      }
 
-      if (emptyCount > 0) {
-        fen.append(emptyCount);
-        emptyCount = 0;
-      }
-
-      if (rank > 1) {
-        fen.append('/');
+        if (file == 8 && rank > 1) {
+          fen.append(emptyCount);
+          emptyCount = 0;
+          fen.append('/');
+        }
       }
     }
 
     return fen.toString();
   }
+
+
 
 
   private static char getFENRepresentation(Piece piece) {
