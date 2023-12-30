@@ -35,10 +35,7 @@ public class GameEndFrame extends JFrame {
     winnerDisplay.setBackground(new Color(218, 218, 218));
 
     JLabel gameEndImageLabel = new JLabel();
-    SwingUtilities.invokeLater(() -> {
-      gameEndImageLabel.setIcon(getGameEndIcon());
-      System.out.println("winnerDisplayWidth: " + winnerDisplay.getWidth());
-    });
+    SwingUtilities.invokeLater(() -> gameEndImageLabel.setIcon(getGameEndIcon()));
     gameEndImageLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
     JLabel gameEndMessageLabel = new JLabel(getGameEndMessage());

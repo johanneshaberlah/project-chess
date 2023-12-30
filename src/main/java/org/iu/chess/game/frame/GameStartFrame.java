@@ -157,7 +157,6 @@ public class GameStartFrame extends JFrame {
   }
 
   private void updateTimeButtonState() {
-    System.out.println(selectedMode);
     time5MinutesButton.setSelected("5 Minuten (+ 0)".equals(selectedMode));
     time10MinutesButton.setSelected("10 Minuten (+ 0)".equals(selectedMode));
     time15MinutesButton.setSelected("15 Minuten (+ 0)".equals(selectedMode));
