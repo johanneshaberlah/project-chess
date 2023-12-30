@@ -25,7 +25,6 @@ public class GameController {
 
   public void gameStartMenu() {
     for (Frame frame : GameFrame.getFrames()) {
-      frame.setVisible(false);
       frame.dispose();
     }
     GameStartFrame startFrame = GameStartFrame.of(context -> {
@@ -48,10 +47,9 @@ public class GameController {
       }, () -> {
         // On-Continue
         game.restartClock();
-        for (Frame pauseFrame : GamePausedFrame.getFrames()) {
-          pauseFrame.setVisible(false);
-        }
-      }, /* On New Game*/ this::gameStartMenu);
+        Arrays.stream(GamePausedFrame.getFrames()).filter(pauseFrame -> pauseFrame.getClass().getSimpleName().equals(GamePausedFrame.class.getSimpleName()))
+          .forEach(Window::dispose);
+      }, /* On New Game */ this::gameStartMenu);
       SwingUtilities.invokeLater(() -> frame.setVisible(true));
       game.pause();
     });
@@ -80,9 +78,7 @@ public class GameController {
       });
     });
     game.start();
-    for (Frame frame : GameStartFrame.getFrames()) {
-      SwingUtilities.invokeLater(() -> frame.setVisible(true));
-    }
+    Arrays.stream(GameStartFrame.getFrames()).forEach(Window::dispose);
   }
 
   public static GameController of(GameFactory gameFactory) {
