@@ -98,7 +98,7 @@ public class MoveRequirementValidator {
   private static boolean checkNeverMoved(Board board, Move move) {
     Piece piece = board.pieceAt(move.from()).get();
     if (piece instanceof Pawn) {
-      return move.to().rank() == (piece.color().equals(PieceColor.WHITE) ? 1 : 6);
+      return move.from().rank() == (piece.color().equals(PieceColor.WHITE) ? 1 : 6);
     }
     return !piece.hasMoved();
   }
