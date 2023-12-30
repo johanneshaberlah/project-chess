@@ -99,8 +99,7 @@ public class GameStartFrame extends JFrame {
     startGameButton.addActionListener(e -> {
       int selectedTime = getSelectedTime();
       String selectedDifficulty = getSelectedDifficulty();
-      System.out.println(selectedTime);
-      gameStartListener.onGameStart(new GameStartContext(selectedTime, selectedDifficulty, getSelectedMode()));
+      gameStartListener.onGameStart(new GameStartContext(selectedTime, 0, selectedDifficulty, getSelectedMode()));
     });
 
     ActionListener aiButtonListener = e -> handleAIDifficultyButtonClick(e.getActionCommand(), "AI " + e.getActionCommand() + " gewählt", (JButton) e.getSource());
