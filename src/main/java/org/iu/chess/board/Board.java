@@ -12,6 +12,8 @@ import org.iu.chess.piece.Queen;
 import java.util.*;
 
 public class Board {
+  // Required to check en passant
+  private final Stack<Move> moves = new Stack<>();
   private final Map<Square, Optional<Piece>> squares;
 
   private Board(Map<Square, Optional<Piece>> squares) {
@@ -38,6 +40,7 @@ public class Board {
       throw IllegalMoveException.of(move);
     }
     commitMove(this, move, piece);
+    moves.push(move);
     piece.declareMoved();
   }
 
@@ -51,16 +54,33 @@ public class Board {
         board.squares.put(move.to(), Optional.of(Queen.ofColor(piece.color())));
         return;
       }
+      if (isEnPassant(move, piece)) {
+        board.squares.put(move.from(), Optional.empty());
+        // Remove pawn
+        board.squares.put(move.to().withRank(move.to().rank() + (move.from().rank() < move.to().rank() ? -1 : 1)), Optional.empty());
+        // Perform move
+        board.squares.put(move.to(), Optional.of(piece));
+        return;
+      }
       board.squares.put(move.from(), Optional.empty());
       board.squares.put(move.to(), Optional.of(piece));
     }
   }
 
-  private boolean checkForPromotion(Move move, Piece piece) {
-    if (move.to().rank() != 7 || !(piece instanceof Pawn)) {
-      return false;
+  public Optional<Move> lastMove() {
+    if (moves.isEmpty()) {
+      return Optional.empty();
     }
-    return true;
+    return Optional.ofNullable(moves.peek());
+  }
+
+  private boolean checkForPromotion(Move move, Piece piece) {
+    return move.to().rank() == 7 && piece instanceof Pawn;
+  }
+
+  private boolean isEnPassant(Move move, Piece piece) {
+    // Pawns can only move sideways to an empty square if there is an en passant target
+    return piece instanceof Pawn && move.fileDistance() > 0 && pieceAt(move.to()).isEmpty();
   }
 
   private void performCastlingIfNecessary(Move move) {

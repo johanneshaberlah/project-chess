@@ -19,8 +19,8 @@ public class Pawn extends Piece {
   public Collection<RelativeMoveWithRequirement> reachableMoves() {
     var legalWhiteMoves = List.of(
       RelativeMoveWithRequirement.of(0, 1, MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE), // 1 Square forward
-      RelativeMoveWithRequirement.of(1, 1, MoveRequirement.REQUIRES_PIECE_AT_TARGET_SQUARE), // 1 Square forward, 1 right
-      RelativeMoveWithRequirement.of(-1, 1, MoveRequirement.REQUIRES_PIECE_AT_TARGET_SQUARE), // 1 Square forward, 1 left
+      RelativeMoveWithRequirement.of(1, 1, MoveRequirement.REQUIRES_EN_PASSANT_OR_PIECE), // En passant or piece
+      RelativeMoveWithRequirement.of(-1, 1, MoveRequirement.REQUIRES_EN_PASSANT_OR_PIECE), // En passant or piece
       RelativeMoveWithRequirement.of(
         0,
         2,
