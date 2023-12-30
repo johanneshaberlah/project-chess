@@ -2,7 +2,9 @@ package org.iu.chess.move;
 
 import org.iu.chess.board.Board;
 import org.iu.chess.game.player.PlayerMove;
+import org.iu.chess.piece.Pawn;
 import org.iu.chess.piece.Piece;
+import org.iu.chess.piece.PieceColor;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -19,7 +21,7 @@ public class MoveRequirementValidator {
       case REQUIRES_EMPTY_RANK -> isRankEmpty(board, move);
       case REQUIRES_EMPTY_FILE -> isFileEmpty(board, move);
       case REQUIRES_EMPTY_DIAGONAL -> isDiagonalEmpty(board, move);
-      case PIECE_NEVER_MOVED -> !board.pieceAt(move.from()).get().hasMoved();
+      case PIECE_NEVER_MOVED -> checkNeverMoved(board, move);
       case CASTLING -> isCastlingAllowed(board, move);
       case REQUIRES_EN_PASSANT_OR_PIECE -> checkEnPassantOrPiece(board, move);
       case NONE -> true;
@@ -91,5 +93,13 @@ public class MoveRequirementValidator {
       return false;
     }
     return isFileEmpty(board, move);
+  }
+
+  private static boolean checkNeverMoved(Board board, Move move) {
+    Piece piece = board.pieceAt(move.from()).get();
+    if (piece instanceof Pawn) {
+      return move.to().rank() == (piece.color().equals(PieceColor.WHITE) ? 1 : 6);
+    }
+    return !piece.hasMoved();
   }
 }
