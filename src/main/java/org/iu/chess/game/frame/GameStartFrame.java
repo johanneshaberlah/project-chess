@@ -24,7 +24,6 @@ public class GameStartFrame extends JFrame {
   private final JTextField customgameIncrementField;
   private int selectedTime = -1;
 
-
   private String selectedMode = "";
 
   private GameStartFrame(GameStartListener gameStartListener) {
@@ -82,7 +81,7 @@ public class GameStartFrame extends JFrame {
 
     // Right column for AI difficulty and start button
     JPanel aiPanel = new JPanel();
-    aiPanel.setLayout(new GridLayout(7, 1));
+    aiPanel.setLayout(new GridLayout(8, 1));
     aiPanel.setBackground(new Color(218, 218, 218));
 
     playAgainstComputerButton = sb.createStyledButton("gegen den Computer spielen");
@@ -101,6 +100,7 @@ public class GameStartFrame extends JFrame {
     aiPanel.add(aiEasyButton);
     aiPanel.add(aiMediumButton);
     aiPanel.add(aiHardButton);
+    aiPanel.add(new JLabel(" "));
     aiPanel.add(new JLabel(" "));
     aiPanel.add(startGameButton);
 
