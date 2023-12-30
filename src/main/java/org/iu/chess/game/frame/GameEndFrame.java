@@ -10,14 +10,11 @@ import java.awt.*;
 
 //TODO Wer hat gewonnen
 //TODO Spiel beenden
-//TODO getWinner() aus main game --> Surrender/Patt etc-
 public class GameEndFrame extends JFrame {
   private TerminalGameStateAndColor gameState;
 
   private JButton exitGameButton;
-  private JButton continueGameButton;
   private JButton mainMenuButton;
-
   private JPanel winnerDisplay;
 
   private GameEndFrame(TerminalGameStateAndColor gameState, Runnable onMainMenu) {
@@ -38,7 +35,6 @@ public class GameEndFrame extends JFrame {
     winnerDisplay.setBackground(new Color(218, 218, 218));
 
     JLabel gameEndImageLabel = new JLabel();
-    // gameEndImageLabel.setIcon(getGameEndIcon());
     SwingUtilities.invokeLater(() -> {
       gameEndImageLabel.setIcon(getGameEndIcon());
       System.out.println("winnerDisplayWidth: " + winnerDisplay.getWidth());
@@ -64,20 +60,15 @@ public class GameEndFrame extends JFrame {
     gameEndButtons.setBackground(new Color(218, 218, 218));
 
     exitGameButton = sb.createStyledButton("Spiel beenden");
-    continueGameButton = sb.createStyledButton("Spiel fortsetzen");
     mainMenuButton = sb.createStyledButton("neues Spiel");
 
     gameEndButtons.add(exitGameButton);
-    gameEndButtons.add(continueGameButton);
     gameEndButtons.add(mainMenuButton);
 
     panel.add(gameEndButtons);
     add(panel);
 
     exitGameButton.addActionListener(e -> System.exit(0));
-    continueGameButton.addActionListener(e -> {
-      // ?
-    });
     mainMenuButton.addActionListener(e -> {
       this.dispose();
       onMainMenu.run();
@@ -87,8 +78,9 @@ public class GameEndFrame extends JFrame {
 
   private ImageIcon getGameEndIcon() {
     if (gameState.color().isEmpty()) {
-      // TODO: Handle draw
-      return null;
+
+      ImageIcon drawIcon = new ImageIcon("src/main/resources/pieces/chessDraw.png");
+      return (new ImageIcon(drawIcon.getImage().getScaledInstance((int) (winnerDisplay.getWidth() * 0.9), -1, Image.SCALE_SMOOTH)));
     }
     ImageIcon icon = new ImageIcon(String.format("src/main/resources/pieces/%sking.png", gameState.color().get().name().toLowerCase()));
     Image image = icon.getImage();
