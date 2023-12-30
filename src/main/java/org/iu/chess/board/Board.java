@@ -75,7 +75,7 @@ public class Board {
   }
 
   private boolean checkForPromotion(Move move, Piece piece) {
-    return move.to().rank() == 7 && piece instanceof Pawn;
+    return move.to().rank() == (piece.color().equals(PieceColor.WHITE) ? 7 : 0) && piece instanceof Pawn;
   }
 
   private boolean isEnPassant(Move move, Piece piece) {
