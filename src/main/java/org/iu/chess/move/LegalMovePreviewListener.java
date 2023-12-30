@@ -2,7 +2,6 @@ package org.iu.chess.move;
 
 import org.iu.chess.Square;
 import org.iu.chess.board.Board;
-import org.iu.chess.game.Game;
 
 import javax.swing.*;
 import java.awt.*;

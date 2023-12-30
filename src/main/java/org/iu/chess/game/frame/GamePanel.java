@@ -59,6 +59,7 @@ public class GamePanel extends JPanel {
         pieceImage.paintIcon(this, g, imageX, imageY);
       });
     });
+
   }
 
 

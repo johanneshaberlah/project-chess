@@ -3,7 +3,7 @@ package org.iu.chess.game.termination;
 public enum TerminalGameState {
   CHECKMATE("Schachmatt"),
   DRAW_THREEFOLD("Zugwiederholung"),
-  DRAW_STALEMATE("Patt"),
+  DRAW_STALEMATE("Patt - Stalemate"),
   DRAW_INSUFFICIENT_MATERIAL("Patt"),
   OUT_OF_TIME("Zeit abgelaufen");
 

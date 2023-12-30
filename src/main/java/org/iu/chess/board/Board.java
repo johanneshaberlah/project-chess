@@ -1,6 +1,5 @@
 package org.iu.chess.board;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.iu.chess.Square;
 import org.iu.chess.move.IllegalMoveException;
@@ -8,6 +7,7 @@ import org.iu.chess.move.Move;
 import org.iu.chess.piece.Pawn;
 import org.iu.chess.piece.Piece;
 import org.iu.chess.piece.PieceColor;
+import org.iu.chess.piece.Queen;
 
 import java.util.*;
 
@@ -44,14 +44,26 @@ public class Board {
   private void commitMove(Board board, Move move, Piece piece) {
     if (piece.fenName() == 'K' && move.fileDistance() > 1) {
       // Castling detected
-      performCastlingIfNecessary(board, move);
+      performCastlingIfNecessary(move);
     } else {
+      if (checkForPromotion(move, piece)) {
+        board.squares.put(move.from(), Optional.empty());
+        board.squares.put(move.to(), Optional.of(Queen.ofColor(piece.color())));
+        return;
+      }
       board.squares.put(move.from(), Optional.empty());
       board.squares.put(move.to(), Optional.of(piece));
     }
   }
 
-  private void performCastlingIfNecessary(Board board, Move move) {
+  private boolean checkForPromotion(Move move, Piece piece) {
+    if (move.to().rank() != 7 || !(piece instanceof Pawn)) {
+      return false;
+    }
+    return true;
+  }
+
+  private void performCastlingIfNecessary(Move move) {
     pieceAt(move.from()).ifPresent(from -> pieceAt(move.to()).ifPresent(to -> {
       if (move.from().file() < move.to().file()) {
         squares.put(move.to().withFile(6), Optional.of(from));

@@ -8,6 +8,9 @@ public record TerminalGameStateAndColor(TerminalGameState state, Optional<PieceC
 
   @Override
   public String toString() {
+    if (color.isEmpty()) {
+      return state.displayName();
+    }
     return state.displayName() + " - Gewinner: " + color.map(PieceColor::displayName).orElse("-");
   }
 }
