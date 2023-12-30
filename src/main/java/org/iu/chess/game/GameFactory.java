@@ -1,6 +1,7 @@
 package org.iu.chess.game;
 
 import org.iu.chess.board.BoardFactory;
+import org.iu.chess.game.artificial.ArtificialPlayer;
 import org.iu.chess.game.player.Player;
 import org.iu.chess.game.player.PlayerClock;
 import org.iu.chess.game.player.PlayerTuple;
@@ -30,6 +31,22 @@ public class GameFactory {
           new HashSet<>(),
           timing.map(PlayerClock::fromStrategy)
         )
+      ),
+      new Stack<>(),
+      BoardFactory.startingPosition()
+    );
+  }
+
+  public Game withTimingAndPlayer(Optional<GameTimingStrategy> timing, ArtificialPlayer artificialPlayer) {
+    return new Game(
+      timing,
+      new PlayerTuple(
+        new Player(
+          WHITE_COLOR,
+          new HashSet<>(),
+          timing.map(PlayerClock::fromStrategy)
+        ),
+        artificialPlayer
       ),
       new Stack<>(),
       BoardFactory.startingPosition()

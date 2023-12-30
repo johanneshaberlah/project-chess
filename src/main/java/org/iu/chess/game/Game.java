@@ -61,7 +61,7 @@ public class Game {
     move.player().clock().ifPresent(PlayerClock::finishMove);
     otherPlayer.clock().ifPresent(PlayerClock::beginMove);
     if (otherPlayer instanceof ArtificialPlayer artificialPlayer) {
-      artificialPlayer.makeMove(this, players.playerColor(artificialPlayer));
+      performMove(new PlayerMove(otherPlayer, artificialPlayer.recommendMove(this)));
     }
   }
 

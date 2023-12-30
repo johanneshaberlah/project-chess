@@ -49,7 +49,7 @@ public class GameController {
         // On-Continue
         game.restartClock();
         for (Frame pauseFrame : GamePausedFrame.getFrames()) {
-          pauseFrame.dispose();
+          pauseFrame.setVisible(false);
         }
       }, /* On New Game*/ this::gameStartMenu);
       SwingUtilities.invokeLater(() -> frame.setVisible(true));
