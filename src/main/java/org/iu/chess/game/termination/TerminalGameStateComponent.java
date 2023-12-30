@@ -32,7 +32,7 @@ public class TerminalGameStateComponent {
     }
     Optional<PieceColor> staleMateColor = Arrays.stream(PieceColor.values()).filter(this::isStaleMate).findFirst();
     if (staleMateColor.isPresent()) {
-      return Optional.of(new TerminalGameStateAndColor(TerminalGameState.DRAW_STALEMATE, staleMateColor));
+      return Optional.of(new TerminalGameStateAndColor(TerminalGameState.DRAW_STALEMATE, Optional.empty()));
     }
     if (isInsufficientMaterial()) {
       return Optional.of(new TerminalGameStateAndColor(TerminalGameState.DRAW_INSUFFICIENT_MATERIAL, Optional.empty()));

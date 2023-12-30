@@ -10,7 +10,7 @@ import java.util.Optional;
 public class BoardFactory {
 
   public static Board startingPosition() {
-    return create("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+    return create("5bnr/4p1pq/2Q1ppkr/7p/2P4P/8/PP1PPPP1/RNB1KBNR w KQ - 0 10");
   }
 
   public static Board create(String fen) {
