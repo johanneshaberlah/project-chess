@@ -4,29 +4,32 @@ import com.google.common.base.Preconditions;
 import org.iu.chess.game.*;
 
 import javax.swing.*;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.List;
 
 public class GameStartFrame extends JFrame {
-  private final JButton play1v1Button;
-  private final JButton playAgainstComputerButton;
-  private final JButton time5MinutesButton;
-  private final JButton time10MinutesButton;
-  private final JButton time15MinutesButton;
-  private final JButton aiEasyButton;
-  private final JButton aiMediumButton;
-  private final JButton aiHardButton;
+  private final JButton play1v1Button, playAgainstComputerButton;
+  private final JButton time5MinutesButton, time10MinutesButton, time15MinutesButton;
+  private final JButton aiEasyButton, aiMediumButton, aiHardButton;
   private final JButton startGameButton;
   private final JButton timeInfinityButton;
   private final JButton loadGameButton;
+  private final JTextField customgameTimeField;
+  private final JTextField customgameIncrementField;
+  private int selectedTime = -1;
+
 
   private String selectedMode = "";
 
   private GameStartFrame(GameStartListener gameStartListener) {
     StyledGameButton sb = new StyledGameButton();
-    setTitle("Chess Game - Main Menu");
+    setTitle("Schach - Hauptmenü");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setSize(530, 330);
     setResizable(false);
@@ -37,7 +40,7 @@ public class GameStartFrame extends JFrame {
 
     // Left column for play options
     JPanel playPanel = new JPanel();
-    playPanel.setLayout(new GridLayout(7, 1));
+    playPanel.setLayout(new GridLayout(8, 1));
     playPanel.setBackground(new Color(218, 218, 218));
 
     play1v1Button = sb.createStyledButton("gegeneinander Spielen");
@@ -49,6 +52,19 @@ public class GameStartFrame extends JFrame {
     time10MinutesButton = sb.createStyledButton("10 Minuten (+ 0)");
     time15MinutesButton = sb.createStyledButton("15 Minuten (+ 0)");
     timeInfinityButton = sb.createStyledButton("Correspondence / Unbegrenzt");
+    customgameTimeField = new JTextField("0",2);
+    customgameIncrementField = new JTextField("0",2);
+
+
+    JPanel customgameTimePanel = new JPanel();
+    customgameTimePanel.setLayout(new FlowLayout());
+    customgameTimePanel.add(customgameTimeField);
+    customgameTimePanel.add(new JLabel(" Minuten (+"));
+    customgameTimePanel.add(customgameIncrementField);
+    customgameTimePanel.add(new JLabel(" Sekunden)"));
+    customgameTimePanel.setBackground(new Color(218, 218, 218));
+    ((AbstractDocument) customgameTimeField.getDocument()).setDocumentFilter(new NumericDocumentFilter());
+    ((AbstractDocument) customgameIncrementField.getDocument()).setDocumentFilter(new NumericDocumentFilter());
 
     loadGameButton = sb.createStyledButton("Spiel laden");
     loadGameButton.setFont(customFont);
@@ -59,6 +75,7 @@ public class GameStartFrame extends JFrame {
     playPanel.add(time5MinutesButton);
     playPanel.add(time10MinutesButton);
     playPanel.add(time15MinutesButton);
+    playPanel.add(customgameTimePanel);
     playPanel.add(loadGameButton);
 
     panel.add(playPanel);
@@ -97,6 +114,14 @@ public class GameStartFrame extends JFrame {
       handleGameModeButtonClick(GameMode.COMPUTER, "Spiel gegen Computer gewählt.", playAgainstComputerButton));
 
     startGameButton.addActionListener(e -> {
+      int customGameTime = "0".equals(customgameTimeField.getText()) ? 0 : Integer.parseInt(customgameTimeField.getText());
+      int customIncrement = "0".equals(customgameIncrementField.getText()) ? 0 : Integer.parseInt(customgameIncrementField.getText());
+      if (customGameTime > 0 || customIncrement > 0) {
+        setSelectedTime(customGameTime);
+        gameStartListener.onGameStart(new GameStartContext(customGameTime, customIncrement, "Custom", getSelectedMode()));
+        return;
+      }
+      setSelectedTime();
       int selectedTime = getSelectedTime();
       String selectedDifficulty = getSelectedDifficulty();
       gameStartListener.onGameStart(new GameStartContext(selectedTime, 0, selectedDifficulty, getSelectedMode()));
@@ -179,11 +204,23 @@ public class GameStartFrame extends JFrame {
   }
 
   private int getSelectedTime() {
-    if (time5MinutesButton.isSelected()) return 5;
-    else if (time10MinutesButton.isSelected()) return 10;
-    else if (time15MinutesButton.isSelected()) return 15;
-    else return -1;
+    return selectedTime;
   }
+  private void setSelectedTime(){
+    setSelectedTime(0);
+  }
+  private void setSelectedTime(int time) {
+    if (time !=0){
+      selectedTime = time;
+      return;
+    }
+    if (time5MinutesButton.isSelected()) selectedTime= 5;
+    else if (time10MinutesButton.isSelected()) selectedTime = 10;
+    else if (time15MinutesButton.isSelected()) selectedTime = 15;
+    else selectedTime = -1;
+  }
+
+
 
   private String getSelectedDifficulty() {
     if (aiEasyButton.isSelected()) return "Anfänger";
@@ -201,5 +238,20 @@ public class GameStartFrame extends JFrame {
   public static GameStartFrame of(GameStartListener gameStartListener) {
     Preconditions.checkNotNull(gameStartListener);
     return new GameStartFrame(gameStartListener);
+  }
+}
+
+class NumericDocumentFilter extends DocumentFilter {
+  @Override
+  public void insertString(FilterBypass fb, int offset, String text, AttributeSet attr) throws BadLocationException {
+    if (text.matches("\\d*")) {
+      super.insertString(fb, offset, text, attr);
+    }
+  }
+  @Override
+  public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+    if (text.matches("\\d*")) {
+      super.replace(fb, offset, length, text, attrs);
+    }
   }
 }
