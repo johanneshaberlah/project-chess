@@ -49,10 +49,10 @@ public class GameController {
         // On-Continue
         game.restartClock();
         for (Frame pauseFrame : GamePausedFrame.getFrames()) {
-          SwingUtilities.invokeLater(() -> pauseFrame.setVisible(true));
+          pauseFrame.dispose();
         }
       }, /* On New Game*/ this::gameStartMenu);
-      frame.setVisible(true);
+      SwingUtilities.invokeLater(() -> frame.setVisible(true));
       game.pause();
     });
     gameFrame.panel().addMouseListener(MoveExecutionListener.of(gameFrame.panel(), game));
