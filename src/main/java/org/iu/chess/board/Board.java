@@ -157,7 +157,12 @@ public class Board {
 
   @Override
   public Board clone() {
-    return Board.of(squares);
+    return Board.of(new HashMap<>(squares));
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(squares);
   }
 
   public static Board of(Map<Square, Optional<Piece>> position) {

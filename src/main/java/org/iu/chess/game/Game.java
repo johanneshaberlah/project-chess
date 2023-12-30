@@ -18,6 +18,8 @@ import java.util.Stack;
 public class Game {
   private final TerminalGameStateComponent terminalStates = TerminalGameStateComponent.of(this);
   private final Collection<GameEndListener> gameEndingHandlers = Lists.newArrayList();
+  // Required for threefold repetition
+  private final Stack<Board> previousPositions = new Stack<>();
 
   private final Optional<GameTimingStrategy> timingStrategy; // Empty if the game mode is "correspondence" (without timing)
   private final PlayerTuple players;
@@ -60,9 +62,17 @@ public class Game {
     var otherPlayer = players.otherPlayer(move.player());
     move.player().clock().ifPresent(PlayerClock::finishMove);
     otherPlayer.clock().ifPresent(PlayerClock::beginMove);
+
+    // Chess works with so-called "half-moves" - a move by white and a move by black is one full move
+    previousPositions.push(position.clone());
+
     if (otherPlayer instanceof ArtificialPlayer artificialPlayer) {
       performMove(new PlayerMove(otherPlayer, artificialPlayer.recommendMove(this)));
     }
+  }
+
+  public Stack<Board> previousPositions() {
+    return (Stack<Board>) previousPositions.clone();
   }
 
   public void pause() {

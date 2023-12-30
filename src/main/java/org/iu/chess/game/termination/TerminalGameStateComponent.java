@@ -1,11 +1,15 @@
 package org.iu.chess.game.termination;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
+import org.iu.chess.board.Board;
 import org.iu.chess.game.Game;
 import org.iu.chess.piece.PieceColor;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Stack;
 
 /**
  * Special Game States:
@@ -15,7 +19,7 @@ import java.util.Optional;
  * - Checkmate
  */
 public class TerminalGameStateComponent {
-  private Game game;
+  private final Game game;
 
   private TerminalGameStateComponent(Game game) {
     this.game = game;
@@ -67,7 +71,21 @@ public class TerminalGameStateComponent {
   }
 
   private boolean isThreefoldRepetition() {
-    // TODO
+    if (game.previousPositions().size() < 3) {
+      return false;
+    }
+    Stack<Board> previousPositions = game.previousPositions();
+    Map<Board, Integer> duplicationAmount = Maps.newHashMap();
+    while (!previousPositions.isEmpty()) {
+      Board board = previousPositions.pop();
+      duplicationAmount.put(board, duplicationAmount.getOrDefault(board, 0) + 1);
+    }
+    for (Board board : duplicationAmount.keySet()) {
+      if (duplicationAmount.get(board) < 3) {
+        continue;
+      }
+      return true;
+    }
     return false;
   }
 
