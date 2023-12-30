@@ -41,7 +41,6 @@ public class GameFrame extends JFrame {
     this.timingStrategy = timingStrategy;
     // Embed the BoardPanel in a JPanel with an EmptyBorder
     JPanel boardPanelContainer = new JPanel(new BorderLayout());
-    boardPanelContainer.setBackground(Color.GRAY);
     boardPanelContainer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
     timingStrategy.ifPresent(timing -> {
