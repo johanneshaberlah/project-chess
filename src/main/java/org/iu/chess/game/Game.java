@@ -11,6 +11,7 @@ import org.iu.chess.game.player.PlayerTuple;
 import org.iu.chess.game.termination.TerminalGameStateComponent;
 import org.iu.chess.move.IllegalMoveException;
 import org.iu.chess.move.Move;
+import org.iu.chess.move.MoveAndColor;
 import org.iu.chess.piece.PieceColor;
 
 import javax.swing.*;
@@ -26,13 +27,13 @@ public class Game {
 
   private final Optional<GameTimingStrategy> timingStrategy; // Empty if the game mode is "correspondence" (without timing)
   private final PlayerTuple players;
-  private final Stack<PlayerMove> moves;
+  private final Stack<MoveAndColor> moves;
   private final Board position;
 
   public Game(
     Optional<GameTimingStrategy> timingStrategy,
     PlayerTuple players,
-    Stack<PlayerMove> moves,
+    Stack<MoveAndColor> moves,
     Board position
   ) {
     this.timingStrategy = timingStrategy;
@@ -56,10 +57,11 @@ public class Game {
         throw InvalidGameActionException.create(move.move(), "It is not the turn of " + move.player());
       }
     }
+    var fromPiece = position.pieceAt(move.move().from()).get();
     // Finish the current move (stop clock, perform the move on the board, push it to the history)
     var targetPiece = position.pieceAt(move.move().to());
     position.performMove(move.move());
-    moves.push(move);
+    moves.push(new MoveAndColor(move.move(), fromPiece.color()));
     // Chess works with so-called "half-moves" - a move by white and a move by black is one full move
     previousPositions.push(position.clone());
 
@@ -104,12 +106,12 @@ public class Game {
     if (moves.isEmpty()) {
       return PieceColor.WHITE;
     }
-    return players.playerColor(players.otherPlayer(moves.peek().player()));
+    return moves.peek().pieceColor().opposite();
   }
 
-  public Stack<PlayerMove> moves() {
+  public Stack<MoveAndColor> moves() {
     // Since stacks are mutable we don't want to expose them publicly to avoid #clear calls
-    return (Stack<PlayerMove>) moves.clone();
+    return (Stack<MoveAndColor>) moves.clone();
   }
 
   public Board position() {

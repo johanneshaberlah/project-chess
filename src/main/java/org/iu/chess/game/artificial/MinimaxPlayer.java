@@ -1,15 +1,21 @@
 package org.iu.chess.game.artificial;
 
 import com.google.common.base.Preconditions;
+import org.iu.chess.board.Board;
 import org.iu.chess.game.Game;
 import org.iu.chess.game.InvalidGameActionException;
 import org.iu.chess.game.player.PlayerClock;
 import org.iu.chess.game.player.PlayerMove;
+import org.iu.chess.game.termination.TerminalGameStateComponent;
 import org.iu.chess.move.IllegalMoveException;
 import org.iu.chess.move.Move;
+import org.iu.chess.move.MoveAndValue;
 import org.iu.chess.move.RelativeMoveWithRequirement;
+import org.iu.chess.piece.Piece;
 import org.iu.chess.piece.PieceColor;
 
+import java.util.Comparator;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -25,10 +31,27 @@ public class MinimaxPlayer extends ArtificialPlayer {
    */
   @Override
   public Move recommendMove(Game game) {
-    System.out.println("### Minimax-Player is thinking about a move ###");
-    legalMoves(game, pieceColor())
-      .forEach(move -> System.out.println("### Legal Move: " + move + " ###"));
-    return null;
+    System.out.println(BoardEvaluator.evaluateBoard(game.position()));
+    return minimax(game, null, 3).move();
+  }
+
+  private MoveAndValue minimax(Game game, Move base, int depth)  {
+    if (depth == 0 || TerminalGameStateComponent.of(game).evaluateTerminalGameState().isPresent()) {
+      return new MoveAndValue(base, BoardEvaluator.evaluateBoard(game.position()));
+    }
+    var moveComparator = Comparator.comparingInt(MoveAndValue::value);
+    return legalMoves(game, game.nextMove())
+      .map(move -> {
+        Game simulation = game.clone();
+        try {
+          simulation.performMove(new PlayerMove(this, move), PERFORM_AS_SIMULATION);
+        } catch (IllegalMoveException | InvalidGameActionException e) {
+          throw new RuntimeException(e);
+        }
+        return minimax(simulation, base == null ? move : base, depth - 1);
+      })
+      .max(game.nextMove().isMaximizer() ? moveComparator : moveComparator.reversed())
+      .get();
   }
 
   /**
@@ -49,7 +72,7 @@ public class MinimaxPlayer extends ArtificialPlayer {
         /* Find all reachable moves for the piece on the square using the vectorial representation without taking the state into account */
         return piece.reachableMoves().stream().map(RelativeMoveWithRequirement::move).map(move -> move.asMove(square));
       })
-      .filter(move -> testMoveValidity(game, move)); /* Test the validity of the move using a simulation board */
+      .filter(move -> testMoveValidity(game, move));  /* Test the validity of the move using a simulation board */
   }
 
   /**

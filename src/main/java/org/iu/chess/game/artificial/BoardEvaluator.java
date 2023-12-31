@@ -14,9 +14,7 @@ public class BoardEvaluator {
   private static int evaluateMaterial(Board board, PieceColor pieceColor) {
     AtomicInteger value = new AtomicInteger(0);
     board.piecesWithColor(pieceColor)
-      .forEach(square ->
-        board.pieceAt(square).ifPresent(piece -> value.getAndAdd(pieceColor.equals(PieceColor.WHITE) ? piece.value() : -piece.value()))
-      );
+      .forEach(square -> board.pieceAt(square).ifPresent(piece -> value.getAndAdd(piece.value())));
     return value.get();
   }
 }
