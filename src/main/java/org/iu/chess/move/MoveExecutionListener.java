@@ -50,7 +50,7 @@ public class MoveExecutionListener extends MouseAdapter {
     game.position().pieceAt(lastClick.square()).ifPresent(piece -> {
       try {
         game.performMove(
-          new PlayerMove(game.playerWithColor(piece.color()), new Move(lastClick.square(), square))
+          new PlayerMove(game.playerWithColor(piece.color()), new Move(lastClick.square(), square)), false
         );
         parent.repaint();
       } catch (IllegalMoveException e) {

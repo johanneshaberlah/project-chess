@@ -38,14 +38,6 @@ public class PlayerClock {
     }
   }
 
-  public int timeRemaining() {
-    return timeRemaining;
-  }
-
-  public int increment() {
-    return increment;
-  }
-
   private void addIncrement() {
     timeRemaining += increment;
   }

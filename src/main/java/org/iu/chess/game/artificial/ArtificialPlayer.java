@@ -18,4 +18,8 @@ public abstract class ArtificialPlayer extends Player {
   }
 
   public abstract Move recommendMove(Game game);
+
+  public PieceColor pieceColor() {
+    return pieceColor;
+  }
 }

@@ -17,4 +17,5 @@ public record PlayerTuple(Player white, Player black) {
   public Set<Player> asSet() {
     return Set.of(white, black);
   }
+
 }

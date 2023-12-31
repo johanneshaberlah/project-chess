@@ -10,7 +10,7 @@ import java.util.Optional;
 public class BoardFactory {
 
   public static Board startingPosition() {
-    return create("5bnr/4p1pq/2Q1ppkr/7p/2P4P/8/PP1PPPP1/RNB1KBNR w KQ - 0 10");
+    return create("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
   }
 
   public static Board create(String fen) {
@@ -79,7 +79,7 @@ public class BoardFactory {
         Square square = new Square(file, rank);
         Optional<Piece> pieceOptional = board.pieceAt(square);
 
-        if (pieceOptional != null && pieceOptional.isPresent()) {
+        if (pieceOptional.isPresent()) {
           if (emptyCount > 0) {
             fen.append(emptyCount);
             emptyCount = 0;
@@ -90,19 +90,20 @@ public class BoardFactory {
         } else {
           emptyCount++;
         }
+      }
 
-        if (file == 8 && rank > 1) {
-          fen.append(emptyCount);
-          emptyCount = 0;
-          fen.append('/');
-        }
+      if (emptyCount > 0) {
+        fen.append(emptyCount);
+        emptyCount = 0;
+      }
+
+      if (rank > 1) {
+        fen.append('/');
       }
     }
 
     return fen.toString();
   }
-
-
 
 
   private static char getFENRepresentation(Piece piece) {
