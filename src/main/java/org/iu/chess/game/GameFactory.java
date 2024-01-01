@@ -21,11 +21,11 @@ public class GameFactory {
 
   public Game of(GameStartContext context, Optional<GameTimingStrategy> strategy) {
     return context.mode().equals("AI") ?
-      withTimingAndPlayer(strategy, MinimaxPlayer.of(PieceColor.BLACK, strategy.map(PlayerClock::fromStrategy)))
-      : withTiming(strategy);
+      withTimingAndPlayer(context, strategy, MinimaxPlayer.of(PieceColor.BLACK, strategy.map(PlayerClock::fromStrategy)))
+      : withTiming(context, strategy);
   }
 
-  public Game withTiming(Optional<GameTimingStrategy> timing) {
+  public Game withTiming(GameStartContext context, Optional<GameTimingStrategy> timing) {
     return new Game(
       timing,
       new PlayerTuple(
@@ -41,11 +41,11 @@ public class GameFactory {
         )
       ),
       new Stack<>(),
-      BoardFactory.startingPosition()
+      BoardFactory.startingPosition(context)
     );
   }
 
-  public Game withTimingAndPlayer(Optional<GameTimingStrategy> timing, ArtificialPlayer artificialPlayer) {
+  public Game withTimingAndPlayer(GameStartContext context, Optional<GameTimingStrategy> timing, ArtificialPlayer artificialPlayer) {
     return new Game(
       timing,
       new PlayerTuple(
@@ -57,7 +57,7 @@ public class GameFactory {
         artificialPlayer
       ),
       new Stack<>(),
-      BoardFactory.startingPosition()
+      BoardFactory.startingPosition(context)
     );
   }
 

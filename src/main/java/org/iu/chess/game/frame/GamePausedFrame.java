@@ -4,6 +4,9 @@ import com.google.common.base.Preconditions;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class GamePausedFrame extends JFrame {
 
@@ -39,6 +42,28 @@ public class GamePausedFrame extends JFrame {
     mainMenuButton.addActionListener(e -> onNewGame.run());
     exitGameButton.addActionListener(e -> System.exit(0));
     add(gamePausedPanel);
+  }
+
+  public void saveToFile(String fen) {
+    JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setDialogTitle("Wähle einen Ort um das Spiel zu speichern.");
+
+    int userSelection = fileChooser.showSaveDialog(this);
+
+    if (userSelection == JFileChooser.APPROVE_OPTION) {
+      File fileToSave = fileChooser.getSelectedFile();
+      if (!fileToSave.getAbsolutePath().endsWith(".txt")) {
+        fileToSave = new File(fileToSave.getAbsolutePath() + ".txt");
+      }
+      try {
+        FileWriter fw = new FileWriter(fileToSave);
+        fw.write(fen);
+        fw.close();
+        JOptionPane.showMessageDialog(this, "Das Spiel wurde gespeichert.");
+      } catch (IOException ex) {
+        JOptionPane.showMessageDialog(this, "Ein Fehler ist aufgetreten: " + ex.getMessage());
+      }
+    }
   }
 
   public static GamePausedFrame of(Runnable onSave, Runnable onContinue, Runnable onNewGame) {

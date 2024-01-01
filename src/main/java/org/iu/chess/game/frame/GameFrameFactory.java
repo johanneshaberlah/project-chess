@@ -1,5 +1,6 @@
 package org.iu.chess.game.frame;
 
+import org.iu.chess.board.BoardFactory;
 import org.iu.chess.game.Game;
 import org.iu.chess.game.GameTimingStrategy;
 import org.iu.chess.move.LegalMovePreviewListener;
@@ -16,7 +17,11 @@ public class GameFrameFactory {
     GameFrame gameFrame = GameFrame.of(game.position(), strategy, () -> {
       // On-New-Game
       GamePausedFrame frame = GamePausedFrame.of(() -> {
-        // On-Save
+        Arrays.stream(GamePausedFrame.getFrames()).filter(pauseFrame -> pauseFrame.getClass().getSimpleName().equals(GamePausedFrame.class.getSimpleName()))
+          .filter(Component::isVisible)
+          .map(pauseFrame -> (GamePausedFrame) pauseFrame)
+          .findFirst()
+          .ifPresent(pauseFrame -> pauseFrame.saveToFile(BoardFactory.generateFEN(game.position())));
         // TODO
       }, () -> {
         // On-Continue

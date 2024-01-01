@@ -1,6 +1,7 @@
 package org.iu.chess.board;
 
 import org.iu.chess.Square;
+import org.iu.chess.game.GameStartContext;
 import org.iu.chess.piece.*;
 
 import java.util.HashMap;
@@ -8,9 +9,10 @@ import java.util.Map;
 import java.util.Optional;
 
 public class BoardFactory {
+  private static final String DEFAULT_STARTING_POSITION = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-  public static Board startingPosition() {
-    return create("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+  public static Board startingPosition(GameStartContext context) {
+    return create(context.customFen().orElse(DEFAULT_STARTING_POSITION));
   }
 
   public static Board create(String fen) {
@@ -74,11 +76,10 @@ public class BoardFactory {
     StringBuilder fen = new StringBuilder();
     int emptyCount = 0;
 
-    for (int rank = 7; rank > 0; rank--) {
+    for (int rank = 7; rank >= 0; rank--) {
       for (int file = 0; file < 8; file++) {
         Square square = new Square(file, rank);
         Optional<Piece> pieceOptional = board.pieceAt(square);
-
         if (pieceOptional.isPresent()) {
           if (emptyCount > 0) {
             fen.append(emptyCount);
@@ -97,7 +98,7 @@ public class BoardFactory {
         emptyCount = 0;
       }
 
-      if (rank > 1) {
+      if (rank > 0) {
         fen.append('/');
       }
     }

@@ -9,9 +9,15 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class GameStartFrame extends JFrame {
   private final JButton play1v1Button, playAgainstComputerButton;
@@ -66,6 +72,12 @@ public class GameStartFrame extends JFrame {
     ((AbstractDocument) customgameIncrementField.getDocument()).setDocumentFilter(new NumericDocumentFilter());
 
     loadGameButton = sb.createStyledButton("Spiel laden");
+    loadGameButton.addActionListener(event -> {
+      String fen = openFile();
+      if (fen != null) {
+        gameStartListener.onGameStart(readContext().withFen(fen));
+      }
+    });
     loadGameButton.setFont(customFont);
 
     playPanel.add(play1v1Button);
@@ -113,19 +125,7 @@ public class GameStartFrame extends JFrame {
     playAgainstComputerButton.addActionListener(e ->
       handleGameModeButtonClick(GameMode.COMPUTER, "Spiel gegen Computer gewählt.", playAgainstComputerButton));
 
-    startGameButton.addActionListener(e -> {
-      int customGameTime = "0".equals(customgameTimeField.getText()) ? 0 : Integer.parseInt(customgameTimeField.getText());
-      int customIncrement = "0".equals(customgameIncrementField.getText()) ? 0 : Integer.parseInt(customgameIncrementField.getText());
-      if (customGameTime > 0 || customIncrement > 0) {
-        setSelectedTime(customGameTime);
-        gameStartListener.onGameStart(new GameStartContext(customGameTime, customIncrement, "Custom", getSelectedMode()));
-        return;
-      }
-      setSelectedTime();
-      int selectedTime = getSelectedTime();
-      String selectedDifficulty = getSelectedDifficulty();
-      gameStartListener.onGameStart(new GameStartContext(selectedTime, 0, selectedDifficulty, getSelectedMode()));
-    });
+    startGameButton.addActionListener(e -> gameStartListener.onGameStart(readContext()));
 
     ActionListener aiButtonListener = e -> handleAIDifficultyButtonClick(e.getActionCommand(), "AI " + e.getActionCommand() + " gewählt", (JButton) e.getSource());
     aiEasyButton.addActionListener(aiButtonListener);
@@ -148,6 +148,19 @@ public class GameStartFrame extends JFrame {
 
     timeInfinityButton.setSelected(true);
     updateButtonBackground(time5MinutesButton);
+  }
+
+  private GameStartContext readContext() {
+    int customGameTime = "0".equals(customgameTimeField.getText()) ? 0 : Integer.parseInt(customgameTimeField.getText());
+    int customIncrement = "0".equals(customgameIncrementField.getText()) ? 0 : Integer.parseInt(customgameIncrementField.getText());
+    if (customGameTime > 0 || customIncrement > 0) {
+      setSelectedTime(customGameTime);
+      return new GameStartContext(customGameTime, customIncrement, "Custom", getSelectedMode(), Optional.empty());
+    }
+    setSelectedTime();
+    int selectedTime = getSelectedTime();
+    String selectedDifficulty = getSelectedDifficulty();
+    return new GameStartContext(selectedTime, 0, selectedDifficulty, getSelectedMode(), Optional.empty());
   }
 
   private void handleGameModeButtonClick(GameMode gameMode, String message, JButton button) {
@@ -227,6 +240,26 @@ public class GameStartFrame extends JFrame {
     else if (aiMediumButton.isSelected()) return "Fortgeschritten";
     else if (aiHardButton.isSelected()) return "Experte";
     else return "null";
+  }
+
+  private String openFile() {
+    JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setDialogTitle("Wähle ein zuvor gespeichertes Spiel aus.");
+
+    int userSelection = fileChooser.showOpenDialog(this);
+
+    if (userSelection == JFileChooser.APPROVE_OPTION) {
+      File fileToOpen = fileChooser.getSelectedFile();
+      try {
+        BufferedReader reader = new BufferedReader(new FileReader(fileToOpen));
+        String firstLine = reader.readLine();
+        reader.close();
+        return firstLine;
+      } catch (IOException ex) {
+        JOptionPane.showMessageDialog(this, "Es ist ein Fehler aufgetreten: " + ex.getMessage());
+      }
+    }
+    return null;
   }
 
   private String getSelectedMode() {
