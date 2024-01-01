@@ -1,7 +1,6 @@
 package org.iu.chess.game.artificial;
 
 import com.google.common.base.Preconditions;
-import org.iu.chess.board.Board;
 import org.iu.chess.game.Game;
 import org.iu.chess.game.InvalidGameActionException;
 import org.iu.chess.game.player.PlayerClock;
@@ -11,11 +10,9 @@ import org.iu.chess.move.IllegalMoveException;
 import org.iu.chess.move.Move;
 import org.iu.chess.move.MoveAndValue;
 import org.iu.chess.move.RelativeMoveWithRequirement;
-import org.iu.chess.piece.Piece;
 import org.iu.chess.piece.PieceColor;
 
 import java.util.Comparator;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
