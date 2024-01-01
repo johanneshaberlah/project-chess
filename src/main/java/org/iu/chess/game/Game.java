@@ -61,10 +61,10 @@ public class Game {
     var targetPiece = position.pieceAt(move.move().to());
     position.performMove(move.move());
     moves.push(new MoveAndColor(move.move(), fromPiece.color()));
-    // Chess works with so-called "half-moves" - a move by white and a move by black is one full move
-    previousPositions.push(position.clone());
 
     if (!simulation) {
+      // Chess works with so-called "half-moves" - a move by white and a move by black is one full move
+      previousPositions.push(position.clone());
       terminalStates.evaluateTerminalGameState().ifPresent(state -> gameEndingHandlers.forEach(handler -> handler.onGameEnd(state)));
       targetPiece.ifPresent(piece -> playerWithColor(piece.color()).loose(piece));
 

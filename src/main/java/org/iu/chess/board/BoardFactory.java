@@ -74,8 +74,8 @@ public class BoardFactory {
     StringBuilder fen = new StringBuilder();
     int emptyCount = 0;
 
-    for (int rank = 8; rank >= 1; rank--) {
-      for (int file = 1; file <= 8; file++) {
+    for (int rank = 7; rank > 0; rank--) {
+      for (int file = 0; file < 8; file++) {
         Square square = new Square(file, rank);
         Optional<Piece> pieceOptional = board.pieceAt(square);
 

@@ -3,6 +3,7 @@ package org.iu.chess.game.termination;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import org.iu.chess.board.Board;
+import org.iu.chess.board.BoardFactory;
 import org.iu.chess.game.Game;
 import org.iu.chess.piece.PieceColor;
 
@@ -75,12 +76,13 @@ public class TerminalGameStateComponent {
       return false;
     }
     Stack<Board> previousPositions = game.previousPositions();
-    Map<Board, Integer> duplicationAmount = Maps.newHashMap();
+    Map<String, Integer> duplicationAmount = Maps.newHashMap();
     while (!previousPositions.isEmpty()) {
       Board board = previousPositions.pop();
-      duplicationAmount.put(board, duplicationAmount.getOrDefault(board, 0) + 1);
+      String fen = BoardFactory.generateFEN(board);
+      duplicationAmount.put(fen, duplicationAmount.getOrDefault(fen, 0) + 1);
     }
-    for (Board board : duplicationAmount.keySet()) {
+    for (String board : duplicationAmount.keySet()) {
       if (duplicationAmount.get(board) < 3) {
         continue;
       }
