@@ -2,9 +2,11 @@ package org.iu.chess.game;
 
 import org.iu.chess.board.BoardFactory;
 import org.iu.chess.game.artificial.ArtificialPlayer;
+import org.iu.chess.game.artificial.MinimaxPlayer;
 import org.iu.chess.game.player.Player;
 import org.iu.chess.game.player.PlayerClock;
 import org.iu.chess.game.player.PlayerTuple;
+import org.iu.chess.piece.PieceColor;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -15,6 +17,12 @@ public class GameFactory {
   private static final String BLACK_COLOR = "Schwarz";
 
   private GameFactory() {
+  }
+
+  public Game of(GameStartContext context, Optional<GameTimingStrategy> strategy) {
+    return context.mode().equals("AI") ?
+      withTimingAndPlayer(strategy, MinimaxPlayer.of(PieceColor.BLACK, strategy.map(PlayerClock::fromStrategy)))
+      : withTiming(strategy);
   }
 
   public Game withTiming(Optional<GameTimingStrategy> timing) {

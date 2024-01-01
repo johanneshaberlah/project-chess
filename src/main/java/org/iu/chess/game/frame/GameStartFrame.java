@@ -98,8 +98,8 @@ public class GameStartFrame extends JFrame {
     aiPanel.add(playAgainstComputerButton);
     aiPanel.add(new JLabel(" Computer-Schwierigkeitsstufe:"));
     aiPanel.add(aiEasyButton);
-    aiPanel.add(aiMediumButton);
-    aiPanel.add(aiHardButton);
+   /* aiPanel.add(aiMediumButton);
+    aiPanel.add(aiHardButton); */
     aiPanel.add(new JLabel(" "));
     aiPanel.add(new JLabel(" "));
     aiPanel.add(startGameButton);
@@ -199,8 +199,8 @@ public class GameStartFrame extends JFrame {
 
   private void enableAiButtons(boolean enable) {
     aiEasyButton.setEnabled(enable);
-    aiMediumButton.setEnabled(enable);
-    aiHardButton.setEnabled(enable);
+   /* aiMediumButton.setEnabled(enable);
+    aiHardButton.setEnabled(enable); */
   }
 
   private int getSelectedTime() {

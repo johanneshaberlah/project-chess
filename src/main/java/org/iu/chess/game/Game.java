@@ -3,7 +3,6 @@ package org.iu.chess.game;
 import com.google.common.collect.Lists;
 import org.iu.chess.board.Board;
 import org.iu.chess.game.artificial.ArtificialPlayer;
-import org.iu.chess.game.artificial.minimax.MoveNode;
 import org.iu.chess.game.player.Player;
 import org.iu.chess.game.player.PlayerClock;
 import org.iu.chess.game.player.PlayerMove;
