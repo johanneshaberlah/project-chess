@@ -67,7 +67,7 @@ public class MinimaxPlayer extends ArtificialPlayer {
         /* Access the piece on the square (previously checked using filtration) */
         var piece = game.position().pieceAt(square).get();
         /* Find all reachable moves for the piece on the square using the vectorial representation without taking the state into account */
-        return piece.reachableMoves().stream().map(RelativeMoveWithRequirement::move).map(move -> move.asMove(square));
+        return piece.reachableMoves().stream().map(RelativeMoveWithRequirement::move).map(move -> move.asLocalizedMove(square));
       })
       .filter(move -> testMoveValidity(game, move));  /* Test the validity of the move using a simulation board */
   }

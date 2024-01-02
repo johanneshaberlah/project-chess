@@ -29,7 +29,7 @@ public class GameController {
 
   public void startGame(GameStartContext context) {
     // Read the strategy from the context
-    Optional<GameTimingStrategy> strategy = Optional.ofNullable(context.time() == -1 ? null : GameTimingStrategy.of(context));
+    Optional<GameTimingStrategy> strategy = GameTimingStrategy.of(context);
     // Create a new game
     Game game = gameFactory.of(context, strategy);
     // Initialize View

@@ -37,7 +37,7 @@ public abstract class Piece {
 
   public Collection<Move> legalMoves(Board board, Square square) {
     return reachableMoves().stream()
-      .map(move -> move.move().asMove(square))
+      .map(move -> move.move().asLocalizedMove(square))
       .filter(move -> isLegalMove(board, move))
       .toList();
   }

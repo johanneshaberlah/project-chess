@@ -34,8 +34,8 @@ public class LegalMovePreviewListener extends MouseAdapter {
         previewPoints.clear();
         piece.reachableMoves().forEach(move -> {
           // Inverting the y-axis for the drawing
-          var baseMove = move.move().asMove(square);
-          var targetPiece = position.pieceAt(move.move().asMove(square).to());
+          var baseMove = move.move().asLocalizedMove(square);
+          var targetPiece = position.pieceAt(move.move().asLocalizedMove(square).to());
           if (piece.isLegalMove(position, baseMove) && !(targetPiece.isPresent() && targetPiece.get().color() == piece.color())) {
             int x = (file + move.move().fileDifference()) * squareSize;
             int y = (7 - (rank + move.move().rankDifference())) * squareSize; // Flipping the y-axis

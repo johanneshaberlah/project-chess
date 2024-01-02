@@ -4,8 +4,19 @@ import org.iu.chess.Square;
 
 public record RelativeMove(int fileDifference, int rankDifference) {
 
-  public Move asMove(Square base) {
-    return new Move(base, base.withFile(base.file() + fileDifference).withRank(base.rank() + rankDifference));
+  /**
+   * Erzeugt einen lokalisierten Zug ausgehend von einem Startfeld.
+   *
+   * @param base Das Startfeld der Figur
+   * @return Den lokalisierten Zug.
+   */
+  public Move asLocalizedMove(Square base) {
+    return new Move(
+      /* from = */ base,
+      /* to = */ base
+        .withFile(base.file() + fileDifference)   // Addiere file-Komponente des Richtungsvektors
+        .withRank(base.rank() + rankDifference)  // Addiere rank-Komponente des Richtungsvektors
+    );
   }
 
   @Override

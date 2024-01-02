@@ -18,15 +18,15 @@ public class Pawn extends Piece {
   @Override
   public Collection<RelativeMoveWithRequirement> reachableMoves() {
     var legalWhiteMoves = List.of(
-      RelativeMoveWithRequirement.of(0, 1, MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE), // 1 Square forward
-      RelativeMoveWithRequirement.of(1, 1, MoveRequirement.REQUIRES_EN_PASSANT_OR_PIECE), // En passant or piece
-      RelativeMoveWithRequirement.of(-1, 1, MoveRequirement.REQUIRES_EN_PASSANT_OR_PIECE), // En passant or piece
+      RelativeMoveWithRequirement.of(0, 1, MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE), // Ein Feld vor
+      RelativeMoveWithRequirement.of(1, 1, MoveRequirement.REQUIRES_EN_PASSANT_OR_PIECE), // Bauer schlägt eine Figur rechts
+      RelativeMoveWithRequirement.of(-1, 1, MoveRequirement.REQUIRES_EN_PASSANT_OR_PIECE), // Bauer schlägt eine Figur links
       RelativeMoveWithRequirement.of(
         0,
         2,
-        MoveRequirement.PIECE_NEVER_MOVED,
-        MoveRequirement.REQUIRES_EMPTY_RANK,
-        MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE
+        MoveRequirement.PIECE_NEVER_MOVED,  // Nur wenn noch nicht bewegt
+        MoveRequirement.REQUIRES_EMPTY_RANK, // Nur wenn keine Figur "im Weg" ist
+        MoveRequirement.REQUIRES_EMPTY_TARGET_SQUARE // Nur wenn keine Figur auf dem Ziel-Feld steht
       )
     );
     if (this.color().equals(PieceColor.WHITE)) {
