@@ -114,6 +114,8 @@ public class GameStartFrame extends JFrame {
     aiPanel.add(aiHardButton); */
     aiPanel.add(new JLabel(" "));
     aiPanel.add(new JLabel(" "));
+    aiPanel.add(new JLabel(" "));
+    aiPanel.add(new JLabel(" "));
     aiPanel.add(startGameButton);
 
     panel.add(aiPanel);
