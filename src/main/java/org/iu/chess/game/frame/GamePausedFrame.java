@@ -1,6 +1,7 @@
 package org.iu.chess.game.frame;
 
 import com.google.common.base.Preconditions;
+import org.iu.chess.game.player.PlayerTuple;
 
 import javax.swing.*;
 import java.awt.*;
@@ -47,7 +48,7 @@ public class GamePausedFrame extends JFrame {
     add(gamePausedPanel);
   }
 
-  public void saveToFile(String fen) {
+  public void saveToFile(String fen, PlayerTuple players) {
     JFileChooser fileChooser = new JFileChooser();
     fileChooser.setDialogTitle("Wähle einen Ort um das Spiel zu speichern.");
 
@@ -61,6 +62,22 @@ public class GamePausedFrame extends JFrame {
       try {
         FileWriter fw = new FileWriter(fileToSave);
         fw.write(fen);
+        fw.write("\n");
+        players.white().clock().ifPresent(clock -> {
+          try {
+            fw.write(String.valueOf(clock.timeRemaining()));
+          } catch (IOException e) {
+            throw new RuntimeException(e);
+          }
+        });
+        players.black().clock().ifPresent(clock -> {
+          try {
+            fw.write(";" + clock.timeRemaining());
+            fw.write(";" + clock.increment());
+          } catch (IOException e) {
+            throw new RuntimeException(e);
+          }
+        });
         fw.close();
         JOptionPane.showMessageDialog(this, "Das Spiel wurde gespeichert.");
       } catch (IOException ex) {

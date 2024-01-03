@@ -23,11 +23,23 @@ public class PlayerClock {
     return timeRemaining - (moveStopwatch == null ? 0 : moveStopwatch.elapsed(TimeUnit.SECONDS));
   }
 
+  public int timeRemaining() {
+    return timeRemaining;
+  }
+
   public void pause() {
     if (moveStopwatch != null) {
       timeRemaining -= moveStopwatch.elapsed(TimeUnit.SECONDS);
       moveStopwatch = null;
     }
+  }
+
+  public void customTimeRemaining(int timeRemaining) {
+    this.timeRemaining = timeRemaining;
+  }
+
+  public int increment() {
+    return increment;
   }
 
   public void finishMove() {

@@ -1,15 +1,12 @@
 package org.iu.chess.game.frame;
 
 import com.google.common.base.Preconditions;
+import org.iu.chess.common.NumericDocumentFilter;
 import org.iu.chess.game.*;
 
 import javax.swing.*;
 import javax.swing.text.AbstractDocument;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DocumentFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
@@ -73,9 +70,9 @@ public class GameStartFrame extends JFrame {
 
     loadGameButton = sb.createStyledButton("Spiel laden");
     loadGameButton.addActionListener(event -> {
-      String fen = openFile();
-      if (fen != null) {
-        gameStartListener.onGameStart(readContext().withFen(fen));
+     GameStartContext context = openFile();
+     if (context != null) {
+        gameStartListener.onGameStart(context);
       }
     });
     loadGameButton.setFont(customFont);
@@ -157,12 +154,12 @@ public class GameStartFrame extends JFrame {
     int customIncrement = "0".equals(customgameIncrementField.getText()) ? 0 : Integer.parseInt(customgameIncrementField.getText());
     if (customGameTime > 0 || customIncrement > 0) {
       setSelectedTime(customGameTime);
-      return new GameStartContext(customGameTime, customIncrement, "Custom", getSelectedMode(), Optional.empty());
+      return new GameStartContext(customGameTime, customGameTime, customIncrement, "Custom", getSelectedMode(), Optional.empty());
     }
     setSelectedTime();
     int selectedTime = getSelectedTime();
     String selectedDifficulty = getSelectedDifficulty();
-    return new GameStartContext(selectedTime, 0, selectedDifficulty, getSelectedMode(), Optional.empty());
+    return new GameStartContext(selectedTime, selectedTime, 0, selectedDifficulty, getSelectedMode(), Optional.empty());
   }
 
   private void handleGameModeButtonClick(GameMode gameMode, String message, JButton button) {
@@ -244,7 +241,7 @@ public class GameStartFrame extends JFrame {
     else return "null";
   }
 
-  private String openFile() {
+  private GameStartContext openFile() {
     JFileChooser fileChooser = new JFileChooser();
     fileChooser.setDialogTitle("Wähle ein zuvor gespeichertes Spiel aus.");
 
@@ -255,8 +252,28 @@ public class GameStartFrame extends JFrame {
       try {
         BufferedReader reader = new BufferedReader(new FileReader(fileToOpen));
         String firstLine = reader.readLine();
+        String timing = reader.readLine();
+        if (timing != null) {
+          String increment = timing.split(";")[2];
+          System.out.println("Applying time white " + (Integer.parseInt(timing.split(";")[0])));
+          return new GameStartContext(
+            Integer.parseInt(timing.split(";")[0]),
+            Integer.parseInt(timing.split(";")[1]),
+            Integer.parseInt(increment),
+            readContext().difficulty(),
+            readContext().mode(),
+            Optional.ofNullable(firstLine)
+          );
+        }
         reader.close();
-        return firstLine;
+        return new GameStartContext(
+          -1,
+          -1,
+          -1,
+          readContext().difficulty(),
+          readContext().mode(),
+          Optional.ofNullable(firstLine)
+        );
       } catch (IOException ex) {
         JOptionPane.showMessageDialog(this, "Es ist ein Fehler aufgetreten: " + ex.getMessage());
       }
@@ -276,17 +293,3 @@ public class GameStartFrame extends JFrame {
   }
 }
 
-class NumericDocumentFilter extends DocumentFilter {
-  @Override
-  public void insertString(FilterBypass fb, int offset, String text, AttributeSet attr) throws BadLocationException {
-    if (text.matches("\\d*")) {
-      super.insertString(fb, offset, text, attr);
-    }
-  }
-  @Override
-  public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
-    if (text.matches("\\d*")) {
-      super.replace(fb, offset, length, text, attrs);
-    }
-  }
-}

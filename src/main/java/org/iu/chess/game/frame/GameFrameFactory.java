@@ -21,7 +21,7 @@ public class GameFrameFactory {
           .filter(Component::isVisible)
           .map(pauseFrame -> (GamePausedFrame) pauseFrame)
           .findFirst()
-          .ifPresent(pauseFrame -> pauseFrame.saveToFile(BoardFactory.generateFEN(game.position())));
+          .ifPresent(pauseFrame -> pauseFrame.saveToFile(BoardFactory.generateFEN(game.position()), game.players()));
         // TODO
       }, () -> {
         // On-Continue

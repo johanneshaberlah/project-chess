@@ -8,6 +8,6 @@ public record GameTimingStrategy(int initialTime, int increment) {
 
   public static Optional<GameTimingStrategy> of(GameStartContext context) {
     Preconditions.checkNotNull(context);
-    return Optional.ofNullable(context.time() == -1 ? null : new GameTimingStrategy(context.time(), context.increment()));
+    return Optional.ofNullable(context.timeWhite() == -1 ? null : new GameTimingStrategy(context.timeWhite(), context.increment()));
   }
 }

@@ -20,9 +20,15 @@ public class GameFactory {
   }
 
   public Game of(GameStartContext context, Optional<GameTimingStrategy> strategy) {
-    return context.mode().equals("AI") ?
+    var game = context.mode().equals("AI") ?
       withTimingAndPlayer(context, strategy, MinimaxPlayer.of(PieceColor.BLACK, strategy.map(PlayerClock::fromStrategy)))
       : withTiming(context, strategy);
+    // Only for game load actions: Load the time of the previous game
+    if (context.timeWhite() != context.timeBlack()) {
+      game.players().white().clock().ifPresent(clock -> clock.customTimeRemaining(context.timeWhite()));
+      game.players().black().clock().ifPresent(clock -> clock.customTimeRemaining(context.timeBlack()));
+    }
+    return game;
   }
 
   public Game withTiming(GameStartContext context, Optional<GameTimingStrategy> timing) {
