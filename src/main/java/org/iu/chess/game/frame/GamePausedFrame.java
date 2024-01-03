@@ -17,6 +17,9 @@ public class GamePausedFrame extends JFrame {
     setSize(265, 330);
     setResizable(false);
     setLocationRelativeTo(null);
+    // Ändern des Standard-Schließverhaltens
+    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
 
     JPanel gamePausedPanel = new JPanel();
     gamePausedPanel.setLayout(new GridLayout(5, 1));
