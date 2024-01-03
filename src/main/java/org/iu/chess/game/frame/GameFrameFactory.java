@@ -29,6 +29,9 @@ public class GameFrameFactory {
         Arrays.stream(GamePausedFrame.getFrames()).filter(pauseFrame -> pauseFrame.getClass().getSimpleName().equals(GamePausedFrame.class.getSimpleName()))
           .forEach(Window::dispose);
       }, /* On New Game */ onNewGame);
+      Arrays.stream(GamePausedFrame.getFrames()).filter(pauseFrame -> pauseFrame.getClass().getSimpleName().equals(GamePausedFrame.class.getSimpleName()))
+        .filter(Component::isVisible)
+        .forEach(Window::dispose);
       SwingUtilities.invokeLater(() -> frame.setVisible(true));
       game.pause();
     });
